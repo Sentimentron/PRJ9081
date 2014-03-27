@@ -31,7 +31,7 @@ public class WordRangeMap {
 	}
 	
 	public void addString(String s) {
-		for (String w : s.split(" ")) {
+		for (String w : s.split("[ ,]")) {
 			this.addWord(w);
 		}
 	}
