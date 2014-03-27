@@ -32,6 +32,7 @@ public class Counter<K> implements Map<K, Integer> {
 
 	@Override
 	public Integer get(Object key) {
+		
 		if (this.map.containsKey(key)) {
 			return this.map.get(key);
 		}

@@ -49,5 +49,19 @@ public class CounterAndPosTokenTest {
 		assertEquals(t.setAnnotation(new AnnotationType(AnnotationKind.Positive)), true);
 		assertEquals(t.setAnnotation(new AnnotationType(AnnotationKind.Negative)), false);
 	}
+	
+	@Test
+	public void testSubjectivityMap() {
+		SubjectivityMap s = new SubjectivityMap();
+		POSToken t = new POSToken(0.1, 4, 5, 1, 1, ",", ",");
+		t.setAnnotation(new AnnotationType(AnnotationKind.Positive));
+		s.put(t);
+		assertTrue(Math.abs(s.get(t) - 1.00f) < 0.05);
+		s.put(t);
+		assertTrue(Math.abs(s.get(t) - 1.00f) < 0.05);
+		t.setAnnotation(new AnnotationType(AnnotationKind.Objective));
+		s.put(t);
+		assertTrue(Math.abs(s.get(t) - 0.667f) < 0.05);
+	}
 
 }
