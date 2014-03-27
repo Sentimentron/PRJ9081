@@ -30,7 +30,7 @@ public class Tweet {
 	}
 	
 	public String getText() {
-		return this.getText();
+		return this.text;
 	}
 	
 	public AnnotationMap getAnnotations() {
