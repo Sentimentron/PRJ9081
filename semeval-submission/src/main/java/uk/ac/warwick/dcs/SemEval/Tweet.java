@@ -5,7 +5,7 @@ import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
 public class Tweet {
 
 	protected AnnotationMap annotations;
-	private String text;
+	protected String text;
 	private int maxLength;
 	
 	public Tweet(String text) {

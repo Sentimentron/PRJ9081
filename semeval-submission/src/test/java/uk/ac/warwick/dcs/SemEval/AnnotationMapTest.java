@@ -56,6 +56,48 @@ public class AnnotationMapTest {
 			}
 		}
 	}
+	
+	/**
+	 * Test method for {@link uk.ac.warwick.dcs.SemEval.AnnotationMap#insertSlice()}.
+	 */
+	@Test
+	public void testInsertSlice() {
+		AnnotationSpan a1 = new AnnotationSpan(AnnotationKind.Negative, 1, 2);
+		AnnotationSpan a2 = new AnnotationSpan(AnnotationKind.Positive, 5, 6);
+		AnnotationSpan a3 = new AnnotationSpan(AnnotationKind.Neutral, 7, 10);
+		AnnotationSpan a4 = new AnnotationSpan(AnnotationKind.Negative, 8, 12);
+		
+		this.map.put(a1);
+		this.map.put(a2);
+		this.map.put(a3);
+		this.map.put(a4);
+		
+		this.map.insertSlice(8);
+		
+		for (Entry<Integer, AnnotationType>e : this.map.entrySet()) {
+			AnnotationType t = e.getValue();
+			int p = e.getKey();
+			if (t.getKind() == AnnotationKind.Neutral) {
+				if (p != 7) {
+					fail(String.format("%d, %s (unexpected)", p, t));
+				}
+			}
+			else if (t.getKind() == AnnotationKind.Positive) {
+				if (p!= 5 && p != 6) {
+					fail(String.format("%d, %s (unexpected)", p, t));
+				}
+			}
+			else if (t.getKind() == AnnotationKind.Negative) {
+				if (p != 1 && p != 2 && p != 8 && p != 9 && p != 10 && p != 11 && p != 12 && p != 13) {
+					fail(String.format("%d, %s (unexpected)", p, t));
+				}
+			}
+			else {
+				assert(t.getKind() == AnnotationKind.Objective);
+			}
+		}
+	}
+	
 	/**
 	 * Test method for {@link uk.ac.warwick.dcs.SemEval.AnnotationMap#regenerate()}.
 	 */
@@ -88,6 +130,9 @@ public class AnnotationMapTest {
 				if (p != 1 && p != 2 && p != 8 && p != 9 && p != 10 && p != 11 && p != 12) {
 					fail(String.format("%d, %s (unexpected)", p, t));
 				}
+			}
+			else {
+				assert(t.getKind() == AnnotationKind.Objective);
 			}
 		}
 	}
@@ -125,6 +170,9 @@ public class AnnotationMapTest {
 				if (p != 1 && p != 2 && p != 8 && p != 9 && p != 10 && p != 11 && p != 12) {
 					fail(String.format("%d, %s (unexpected)", p, t));
 				}
+			}
+			else {
+				assert(t.getKind() == AnnotationKind.Objective);
 			}
 		}
 	}
