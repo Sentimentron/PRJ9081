@@ -1,0 +1,63 @@
+package uk.ac.warwick.dcs.SemEval;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import edu.stanford.nlp.util.Pair;
+
+public class SemEvalTaskAReader {
+	
+	private String path;
+	
+	public SemEvalTaskAReader(String pathToFile) {
+		this.path = pathToFile;
+	}
+
+	private Map<Pair<Integer, Integer>, Tweet> readFromFile() throws Exception {
+		String line;
+		Map<Pair<Integer, Integer>, Tweet> ret = new HashMap<Pair<Integer, Integer>, Tweet>();
+		
+		BufferedReader br = new BufferedReader(new FileReader(this.path));
+		while ((line = br.readLine()) != null) {
+		   String[] fields = line.split("\t");
+		   int identifier1 = Integer.parseInt(fields[0]);
+		   int identifier2 = Integer.parseInt(fields[1]);
+		   int start = Integer.parseInt(fields[2]);
+		   int end   = Integer.parseInt(fields[3]);
+		   String polarity = fields[4];
+		   String tweet    = fields[5];
+		   
+		   Tweet obj;
+		   Pair<Integer, Integer> identity = new Pair<Integer, Integer>(identifier1, identifier2);
+		   if(ret.containsKey(identity)) {
+			   obj = ret.get(identity);
+		   }
+		   else {
+			   obj = new Tweet(tweet);
+			   ret.put(identity, obj);
+		   }
+		   
+		   AnnotationType spanPolarity = AnnotationType.fromSemEvalString(polarity);
+		   AnnotationSpan span = new AnnotationSpan(spanPolarity.getKind(), start, end);
+		   obj.addAnnotation(span);
+		}
+		
+		br.close();
+		return ret;
+	}
+	
+	public List<Tweet> readTweets() throws Exception {
+		List<Tweet> ret = new ArrayList<Tweet>();
+		for (Map.Entry<Pair<Integer, Integer>, Tweet> e: this.readFromFile().entrySet()) {
+			ret.add(e.getValue());
+		}
+		return ret;
+	}
+
+}

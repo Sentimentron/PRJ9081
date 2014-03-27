@@ -37,6 +37,16 @@ public class AnnotationType {
 		}
 	}
 	
+	public static AnnotationType fromSemEvalString(String s) throws Exception {
+		if(s.equals("negative")) return new AnnotationType(AnnotationKind.Negative);
+		else if (s.equals("positive")) return new AnnotationType(AnnotationKind.Positive);
+		else if(s.equals("neutral")) return new AnnotationType(AnnotationKind.Neutral);
+		else if(s.equals("objective")) return new AnnotationType(AnnotationKind.Objective);
+		else {
+			throw new Exception(String.format("Can't interpret annotation string '%s'", s));
+		}
+	}
+	
 	public boolean isSubjective() {
 		return this.type != AnnotationKind.Objective;
 	}

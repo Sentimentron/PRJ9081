@@ -37,25 +37,40 @@ public class AnnotationMap implements Map<Integer, AnnotationType> {
 	}
 	
 	public boolean equal(AnnotationMap o) {
-		Set<Map.Entry<Integer,AnnotationType>> s1 = this.entrySet();
-		Set<Map.Entry<Integer,AnnotationType>> s2 = o.entrySet();
-		if (s1.containsAll(s2)) {
-			if (s2.containsAll(s1)) {
-				return true;
+		int t1 = this.regenerate();
+		int t2 = o.regenerate();
+		int max = t1;
+		if (t2 > max) max = t2; 
+		for (int i = 0; i <= max; i++) {
+			AnnotationType a1 = this.get(i);
+			AnnotationType a2 = o.get(i);
+			if (a1 == null || a2 == null) {
+				if (a1 != null) return false;
+				else if (a2 != null) return false;
+				else continue;
+			}
+			if (a1.getKind() != a2.getKind()) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public boolean subjEqual(AnnotationMap o) {
-		Set<Map.Entry<Integer,AnnotationType>> s1 = this.entrySet();
-		Set<Map.Entry<Integer,AnnotationType>> s2 = o.entrySet();
-		for (Map.Entry<Integer, AnnotationType> e1 : s1) {
-			for (Map.Entry<Integer, AnnotationType> e2: s2) {
-				if (e1.getKey() != e2.getKey()) continue;
-				if (!(e1.getValue().isSubjective() && e1.getValue().isSubjective())) {
-					return false;
-				}
+		int t1 = this.regenerate();
+		int t2 = o.regenerate();
+		int max = t1;
+		if (t2 > max) max = t2; 
+		for (int i = 0; i <= max; i++) {
+			AnnotationType a1 = this.get(i);
+			AnnotationType a2 = o.get(i);
+			if (a1 == null || a2 == null) {
+				if (a1 != null) return false;
+				else if (a2 != null) return false;
+				else continue;
+			}
+			if (a1.isSubjective() != a2.isSubjective()) {
+				return false;
 			}
 		}
 		return true;
@@ -69,12 +84,14 @@ public class AnnotationMap implements Map<Integer, AnnotationType> {
 		return new AnnotationMap(this.duplicateStrategy, spanClones);
 	}
 	
-	public void regenerate() {
+	public int regenerate() {
 		this.impl.clear();
+		int ret = 0;
 		for (AnnotationSpan p : this.spanList) {
 			int start = p.getStart();
 			int end   = p.getEnd();
 			for (int i = start; i <= end; i++) {
+				if (i > ret) ret = i;
 				if (this.impl.containsKey(i)) {
 					// Use the duplicate strategy to decide what to do
 					if (this.duplicateStrategy == DuplicationStrategy.Replace) {
@@ -89,6 +106,7 @@ public class AnnotationMap implements Map<Integer, AnnotationType> {
 				}
 			}
 		}
+		return ret;
 	}
 	
 	@Override

@@ -43,7 +43,7 @@ public class Tweet {
 	
 	public boolean equal(Tweet other) {
 		if (this.getText().equals(other.getText())) {
-			if (this.annotations.equals(other.getAnnotations())) {
+			if (this.annotations.equal(other.getAnnotations())) {
 				return true;
 			}
 		}
