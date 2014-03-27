@@ -22,12 +22,12 @@ public class WordRangeMap {
 	
 	public void addWord(String s) {
 		int wordLength = s.length();
-		this.currentWordOffset++;
 		this.wordOffsetMap.put(this.currentWordOffset, s);
 		this.wordStartCharOffsetToWord.put(this.currentCharOffset, this.currentWordOffset);
 		this.currentCharOffset += wordLength;
 		this.wordEndCharOffsetToWord.put(this.currentCharOffset, this.currentWordOffset);
 		this.currentCharOffset++;
+		this.currentWordOffset++;
 	}
 	
 	public void addString(String s) {
