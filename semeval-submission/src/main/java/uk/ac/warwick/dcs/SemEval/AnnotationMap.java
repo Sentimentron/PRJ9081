@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.stanford.nlp.util.ArrayMap;
+import edu.stanford.nlp.util.Pair;
 import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
 
@@ -33,6 +34,31 @@ public class AnnotationMap implements Map<Integer, AnnotationType> {
 		for (AnnotationSpan p : types) {
 			this.spanList.add(p);
 		}
+	}
+	
+	public boolean equal(AnnotationMap o) {
+		Set<Map.Entry<Integer,AnnotationType>> s1 = this.entrySet();
+		Set<Map.Entry<Integer,AnnotationType>> s2 = o.entrySet();
+		if (s1.containsAll(s2)) {
+			if (s2.containsAll(s1)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean subjEqual(AnnotationMap o) {
+		Set<Map.Entry<Integer,AnnotationType>> s1 = this.entrySet();
+		Set<Map.Entry<Integer,AnnotationType>> s2 = o.entrySet();
+		for (Map.Entry<Integer, AnnotationType> e1 : s1) {
+			for (Map.Entry<Integer, AnnotationType> e2: s2) {
+				if (e1.getKey() != e2.getKey()) continue;
+				if (!(e1.getValue().isSubjective() && e1.getValue().isSubjective())) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	public AnnotationMap clone() {

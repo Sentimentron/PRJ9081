@@ -36,4 +36,26 @@ public class Tweet {
 	public AnnotationMap getAnnotations() {
 		return this.annotations.clone();
 	}
+	
+	public void clearAnnotations() {
+		this.annotations.clear();
+	}
+	
+	public boolean equal(Tweet other) {
+		if (this.getText().equals(other.getText())) {
+			if (this.annotations.equals(other.getAnnotations())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean subjEqual(Tweet other) {
+		if (this.getText().equals(other.getText())) {
+			if (this.annotations.subjEqual(other.getAnnotations())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

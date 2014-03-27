@@ -6,16 +6,35 @@ import java.util.List;
 public class AnnotationType {
 
 	public enum AnnotationKind {
-		Positive,
+		Positive, // NB, there are all subjective
 		Negative,
 		Neutral,
-		Objective
+		Objective,
+		Subjective, // This means we don't know whether is positive, negative, neutral
 	}
 	
 	AnnotationKind type;
 	
 	public AnnotationType(AnnotationKind k) {
 		this.type = k;
+	}
+	
+	public AnnotationType(String s) {
+		if (s == "p") {
+			this.type = AnnotationKind.Positive;
+		}
+		else if (s == "n") {
+			this.type = AnnotationKind.Negative;
+		}
+		else if (s == "e") {
+			this.type = AnnotationKind.Neutral;
+		}
+		else if (s == "s") {
+			this.type = AnnotationKind.Subjective;
+		}
+		else {
+			this.type = AnnotationKind.Objective;
+		}
 	}
 	
 	public boolean isSubjective() {

@@ -14,7 +14,9 @@ public class POSTaggedTweet extends Tweet {
 
 	private List<RawTagger.TaggedToken> rawTokens;
 	private List<POSToken> tokens;
-	private WordRangeMap wm;
+	private WordRangeMap wm, origWm;
+	private List<Integer> insertedOffsets;
+	private Tweet parent;
 	
 	public List<POSToken> getPOSTokens() {
 		List<POSToken> ret = new ArrayList<POSToken>();
@@ -24,12 +26,38 @@ public class POSTaggedTweet extends Tweet {
 		return ret;
 	}
 	
+	public void applyDerivedAnnotation(int derivedEndCharOffset, AnnotationType a) throws WordRangeMapException {
+		
+		for (int i = insertedOffsets.size() - 1; i >= 0; i--) {
+			int insertedOffset = this.insertedOffsets.get(i);
+			// If the insertedOffset is greater than or equal to the derived offset
+			// then that insertion won't have affected the derived offset because we only insert
+			// Otherwise, have to decrement the insertedOffset
+			if (insertedOffset < derivedEndCharOffset) {
+				derivedEndCharOffset--;
+			}
+			
+		}
+		int wordOffset = this.origWm.getWordEndOffset(derivedEndCharOffset);
+		
+		this.parent.addAnnotation(new AnnotationSpan(a.getKind(), wordOffset, wordOffset));
+	}
+	
+	public Tweet getParent() {
+		return this.parent;
+	}
+	
 	public POSTaggedTweet(Tweet t, RawTagger tagger) throws Exception {
 		super(t.getText(), t.getAnnotations());
+		
+		this.parent = new Tweet(t.getText(), t.getAnnotations());
 		
 		String rawText = t.getText();
 		String textAfterLeftFiltering;
 		String textReadyToTokenize;
+		
+		this.origWm = new WordRangeMap(this.getText());
+		this.insertedOffsets = new ArrayList<Integer>();
 		
 		// First: some spans will correspond to extra spaces
 		// inserted by the pos tagger
@@ -41,7 +69,10 @@ public class POSTaggedTweet extends Tweet {
 			if (groupCount != 3) continue;
 			for (int i = 1; i <= groupCount; i++) {
 				startCharOffset += leftMatcher.group(i).length();
-				if (i == 2) this.annotations.insertSlice(startCharOffset);
+				if (i == 2) {
+					this.annotations.insertSlice(startCharOffset);
+					this.insertedOffsets.add(startCharOffset);
+				}
 			}
 			//this.annotations.removeSliceRange(startWordOffset, endWordOffset);
 		}
@@ -56,7 +87,10 @@ public class POSTaggedTweet extends Tweet {
 			if (groupCount != 3) continue;
 			for (int i = 1; i <= groupCount; i++) {
 				startCharOffset += leftMatcher.group(i).length();
-				if (i == 1) this.annotations.insertSlice(startCharOffset);
+				if (i == 1) {
+					this.annotations.insertSlice(startCharOffset);
+					this.insertedOffsets.add(startCharOffset);
+				}
 			}
 		}
 		

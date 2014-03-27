@@ -29,8 +29,8 @@ public class AnnotationSpan extends AnnotationType {
 		if (start > end) {
 			return false;
 		}
-		if (start <= 0) return false;
-		if (end <= 0) return false;
+		if (start < 0) return false;
+		if (end < 0) return false;
 		return true;
 	}
 	

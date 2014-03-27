@@ -53,6 +53,7 @@ public class WordRangeMap {
 		}
 		return wordStart;
 	}
+	
 	public int getWordEndOffset(int charOffsetEnd) throws WordRangeMapException {
 		int wordEnd = -1;
 		for (Map.Entry<Integer, Integer> e: this.wordStartCharOffsetToWord.entrySet()) {
