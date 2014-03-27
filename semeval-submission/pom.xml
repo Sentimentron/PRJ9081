@@ -11,13 +11,13 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>edu.cmu.cs</groupId>
       <artifactId>ark-tweet-nlp</artifactId>
-      <version>0.3.2</version>
+      <version>0.3.3</version>
     </dependency>
     <dependency>
         <groupId>nz.ac.waikato.cms.weka</groupId>
