@@ -3,7 +3,7 @@ package uk.ac.warwick.dcs.SemEval;
 import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
 import cmu.arktweetnlp.RawTagger;
 
-public class POSToken {
+public class POSToken implements Comparable<POSToken> {
 	
 	public final double posConfidence; // Confidence in POS assignment
 	public final int startCharOffset;	  // Start character offset in tweet
@@ -13,6 +13,8 @@ public class POSToken {
 	public final int endWordOffset;
 	public final int startWordOffset;
 
+	private AnnotationType annotation;
+	
 	public POSToken(RawTagger.TaggedToken r, WordRangeMap wm) throws WordRangeMapException {
 		this.posConfidence = r.confidence;
 		this.startCharOffset = r.span.first;
@@ -38,6 +40,13 @@ public class POSToken {
 	public POSToken clone() {
 		return new POSToken(this.posConfidence, this.startCharOffset, this.endCharOffset,
 							this.startWordOffset, this.endWordOffset, this.tag, this.token);
+	}
+
+	@Override
+	public int compareTo(POSToken o) {
+		int comparison = this.tag.compareTo(o.tag);
+		comparison += this.token.compareTo(o.token);
+		return comparison;
 	}
 	
 }
