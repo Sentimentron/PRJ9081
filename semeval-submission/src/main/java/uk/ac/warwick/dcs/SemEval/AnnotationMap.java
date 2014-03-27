@@ -35,6 +35,14 @@ public class AnnotationMap implements Map<Integer, AnnotationType> {
 		}
 	}
 	
+	public AnnotationMap clone() {
+		List<AnnotationSpan> spanClones = new ArrayList<AnnotationSpan>();
+		for (AnnotationSpan s : this.spanList) {
+			spanClones.add((AnnotationSpan)s.clone());
+		}
+		return new AnnotationMap(this.duplicateStrategy, spanClones);
+	}
+	
 	public void regenerate() {
 		this.impl.clear();
 		for (AnnotationSpan p : this.spanList) {

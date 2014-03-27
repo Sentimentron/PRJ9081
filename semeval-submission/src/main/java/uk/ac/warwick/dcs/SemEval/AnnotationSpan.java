@@ -6,6 +6,10 @@ public class AnnotationSpan extends AnnotationType {
 	int startOffset;
 	int endOffset;
 	
+	public AnnotationSpan clone() {
+		return new AnnotationSpan(this.getKind(), this.startOffset, this.endOffset);
+	}
+	
 	public AnnotationSpan(AnnotationKind k, int start, int end) throws InvalidAnnotationSpanException {
 		super(k);
 		this.startOffset = start;

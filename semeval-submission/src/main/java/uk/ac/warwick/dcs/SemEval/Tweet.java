@@ -4,7 +4,7 @@ import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
 
 public class Tweet {
 
-	private AnnotationMap annotations;
+	protected AnnotationMap annotations;
 	private String text;
 	private int maxLength;
 	
@@ -17,6 +17,11 @@ public class Tweet {
 		this.maxLength = arr.length;
 	}
 	
+	public Tweet(String text, AnnotationMap m) {
+		this(text);
+		this.annotations = m;
+	}
+	
 	public void addAnnotation(AnnotationSpan s) throws InvalidAnnotationSpanException {
 		if (s.getEnd() > this.maxLength) {
 			throw new InvalidAnnotationSpanException("Longer than the tweet", this.maxLength, s.getEnd());
@@ -26,5 +31,9 @@ public class Tweet {
 	
 	public String getText() {
 		return this.getText();
+	}
+	
+	public AnnotationMap getAnnotations() {
+		return this.annotations.clone();
 	}
 }
