@@ -16,7 +16,15 @@ public class POSTaggedTweet extends Tweet {
 	private List<POSToken> tokens;
 	private WordRangeMap wm;
 	
-	public POSTaggedTweet(Tweet t, RawTagger tagger) throws WordRangeMapException {
+	public List<POSToken> getPOSTokens() {
+		List<POSToken> ret = new ArrayList<POSToken>();
+		for (POSToken t : this.tokens) {
+			ret.add(t.clone());
+		}
+		return ret;
+	}
+	
+	public POSTaggedTweet(Tweet t, RawTagger tagger) throws Exception {
 		super(t.getText(), t.getAnnotations());
 		
 		String rawText = t.getText();
@@ -62,9 +70,15 @@ public class POSTaggedTweet extends Tweet {
 		for (RawTagger.TaggedToken token : this.rawTokens) {
 			this.tokens.add(new POSToken(token, this.wm));
 		}
-		for (POSToken t : this.tokens) {
-			for (int i = t.startWordOffset; i <= t.endWordOffset; i++) {
-				t.annotate(this.annotations.get(i));
+		for (POSToken token : this.tokens) {
+			for (int i = token.startWordOffset; i <= token.endWordOffset; i++) {
+				AnnotationType an = this.annotations.get(i);
+				if (i == 3) {
+					System.out.printf("3: %s", an);
+				}
+				if (an != null) {
+					token.setAnnotation(an);
+				}
 			}
 		}
 		

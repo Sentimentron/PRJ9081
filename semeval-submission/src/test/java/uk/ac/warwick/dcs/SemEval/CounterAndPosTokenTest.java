@@ -43,7 +43,7 @@ public class CounterAndPosTokenTest {
 	}
 	
 	@Test
-	public void posAssignmentCheck() {
+	public void posAssignmentCheck() throws Exception {
 		POSToken t = new POSToken(0.1, 4, 5, 1, 1, ",", ",");
 		assertEquals(t.setAnnotation(new AnnotationType(AnnotationKind.Positive)), true);
 		assertEquals(t.setAnnotation(new AnnotationType(AnnotationKind.Positive)), true);
@@ -51,7 +51,7 @@ public class CounterAndPosTokenTest {
 	}
 	
 	@Test
-	public void testSubjectivityMap() {
+	public void testSubjectivityMap() throws Exception {
 		SubjectivityMap s = new SubjectivityMap();
 		POSToken t = new POSToken(0.1, 4, 5, 1, 1, ",", ",");
 		t.setAnnotation(new AnnotationType(AnnotationKind.Positive));

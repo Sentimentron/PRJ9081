@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.SemEval;
 
+import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
 import cmu.arktweetnlp.RawTagger;
 
@@ -36,10 +37,16 @@ public class POSToken implements Comparable<POSToken> {
 		this.token = token;
 	}
 	
+	public POSToken(double confidence, int startCharOffset, int endCharOffset,
+			int startWordOffset, int endWordOffset, String tag, String token,
+			AnnotationType an) {
+		this(confidence, startCharOffset, endCharOffset, startWordOffset, endWordOffset, tag, token);
+		this.annotation = an;
+		}	
 	
 	public POSToken clone() {
 		return new POSToken(this.posConfidence, this.startCharOffset, this.endCharOffset,
-							this.startWordOffset, this.endWordOffset, this.tag, this.token);
+							this.startWordOffset, this.endWordOffset, this.tag, this.token, this.annotation);
 	}
 
 	@Override
@@ -49,8 +56,11 @@ public class POSToken implements Comparable<POSToken> {
 		return comparison;
 	}
 	
-	public boolean setAnnotation(AnnotationType t) {
+	public boolean setAnnotation(AnnotationType t) throws Exception {
 		boolean ret = true;
+		if (t == null) {
+			throw new Exception("Cannot be null");
+		}
 		if (this.annotation != null) {
 			if (!this.annotation.equals(t)) {
 				System.err.println("Warning: setAnnotation already called with something different!");
@@ -62,6 +72,9 @@ public class POSToken implements Comparable<POSToken> {
 	}
 	
 	public AnnotationType getAnnotation() {
+		if (this.annotation == null) {
+			return new AnnotationType(AnnotationKind.Objective);
+		}
 		return this.annotation;
 	}
 	

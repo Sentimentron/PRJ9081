@@ -52,14 +52,14 @@ public class AnnotationMap implements Map<Integer, AnnotationType> {
 				if (this.impl.containsKey(i)) {
 					// Use the duplicate strategy to decide what to do
 					if (this.duplicateStrategy == DuplicationStrategy.Replace) {
-						this.impl.put(i, p);
+						this.impl.put(i, new AnnotationSpan(p.getKind(), i, i));
 					}
 					else {
 						throw new RuntimeException("Unknown duplication strategy.");
 					}
 				}
 				else {
-					this.impl.put(i, p);
+					this.impl.put(i, new AnnotationSpan(p.getKind(), i, i));
 				}
 			}
 		}

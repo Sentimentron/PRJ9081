@@ -50,4 +50,10 @@ public class SubjectivityMap {
 		}
 		this.freq_map.remove(key);
 	}
+	
+	public void updateFromTweet(POSTaggedTweet p) {
+		for (POSToken t : p.getPOSTokens()) {
+			this.put(t);
+		}
+	}
 }

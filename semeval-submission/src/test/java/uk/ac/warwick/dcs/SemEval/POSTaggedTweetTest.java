@@ -26,7 +26,7 @@ public class POSTaggedTweetTest {
 
 	@Test
 	// Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC ( BCS ) Wednesday continued to reap the rewards... http://bit.ly/W5t0au
-	public void testConstructionAndPOSTagging1() throws WordRangeMapException {
+	public void testConstructionAndPOSTagging1() throws Exception {
 		Tweet t = new Tweet("Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC (BCS) Wednesday continued to reap the rewards... http://bit.ly/W5t0au ");
 		t.addAnnotation(new AnnotationSpan(AnnotationKind.Positive, 10, 14));
 		// Positive span should extend to word offset 16 after pos tagging
@@ -43,7 +43,7 @@ public class POSTaggedTweetTest {
 	// In case you weren't invited . . .: ..it ' may ' have been because Andy was hiding a deep,dark secret Personali... http://bit.ly/WdxawR 
 	// || |  | | | |     | |     | | | || |   || | | |||  | |  | |     | |  | | | |    |   |  ||   | |    | |           ||                  |
 	@Test
-	public void testConstructionAndPosTagging2() throws WordRangeMapException {
+	public void testConstructionAndPosTagging2() throws Exception {
 		Tweet t = new Tweet("In case you weren't invited . . .: ..it 'may' have been because Andy was hiding a deep,dark secret Personali... http://bit.ly/WdxawR ");
 		t.addAnnotation(new AnnotationSpan(AnnotationKind.Negative, 3, 4));
 		t.addAnnotation(new AnnotationSpan(AnnotationKind.Negative, 17, 20));
@@ -57,6 +57,21 @@ public class POSTaggedTweetTest {
 		assert(mp.get(20).getKind() == AnnotationKind.Negative);
 		assert(mp.get(21).getKind() == AnnotationKind.Negative);
 		assert(mp.get(22).getKind() == AnnotationKind.Negative);
+		
+		for (POSToken token : pt.getPOSTokens()) {
+			int start = token.startWordOffset;
+			AnnotationKind sort = token.getAnnotation().getKind();
+			if(start == 3) assertTrue(sort == AnnotationKind.Negative);
+			else if(start == 4) assertTrue(sort == AnnotationKind.Negative);
+			else if(start == 19) assertTrue(sort == AnnotationKind.Negative);
+			else if(start == 20) assertTrue(sort == AnnotationKind.Negative);
+			else if(start == 21) assertTrue(sort == AnnotationKind.Negative);
+			else if(start == 22) assertTrue(sort == AnnotationKind.Negative);
+			else {
+				assertTrue(sort == AnnotationKind.Objective);
+			}
+
+		}
 	}
 	
 }

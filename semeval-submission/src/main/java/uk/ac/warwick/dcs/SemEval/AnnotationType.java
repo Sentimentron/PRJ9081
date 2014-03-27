@@ -1,5 +1,8 @@
 package uk.ac.warwick.dcs.SemEval;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AnnotationType {
 
 	public enum AnnotationKind {
@@ -29,5 +32,17 @@ public class AnnotationType {
 	
 	public boolean equals(AnnotationType t) {
 		return this.getKind() == t.getKind();
+	}
+	
+	public String toNominalSubj() {
+		if (this.isSubjective()) return "s";
+		return "q";
+	}
+	
+	public static List<String> getNominalSubjList() {
+		List<String> ret = new ArrayList<String>();
+		ret.add("s");
+		ret.add("q");
+		return ret;
 	}
 }
