@@ -19,9 +19,13 @@ public class AnnotationSpan extends AnnotationType {
 		}
 	}
 
-	private boolean validate() {
+	public boolean validate() {
 		int start = this.startOffset;
 		int end   = this.endOffset;
+		return this.isValid(start, end);
+	}
+	
+	public static boolean isValid(int start, int end) {
 		if (start > end) {
 			return false;
 		}

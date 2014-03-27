@@ -161,4 +161,32 @@ public class AnnotationMap implements Map<Integer, AnnotationType> {
 		return this.impl.values();
 	}
 
+	public void removeSliceShiftRightToLeft(int offset) {
+		// Decrement all start offsets which appear above offset
+		// (except if they appear on the offset)
+		// Decrement all end offset which are above the offset
+		List<AnnotationSpan> spans = new ArrayList<AnnotationSpan>();
+		for (AnnotationSpan s : this.spanList) {
+			int startOffset = s.getStart();
+			int endOffset   = s.getEnd();
+			if (startOffset > offset) startOffset--;
+			else if (startOffset == offset) startOffset++; 
+			if (endOffset >= offset) endOffset--;
+			if (AnnotationSpan.isValid(startOffset, endOffset)) {
+				AnnotationSpan r = new AnnotationSpan(s.getKind(), startOffset, endOffset);
+				spans.add(r);
+			}
+		}
+		this.spanList = spans;
+		this.regenerate();
+	}
+	
+	public void removeSliceRange(int startOffset, int endOffset) {
+		int slicesToRemove = endOffset - startOffset + 1;
+		while(slicesToRemove > 0) {
+			this.removeSliceShiftRightToLeft(startOffset);
+			slicesToRemove--;
+		}
+	}
+	
 }

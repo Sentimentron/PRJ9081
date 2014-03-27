@@ -30,6 +30,33 @@ public class AnnotationMapTest {
 	}
 
 	/**
+	 * Test method for {@link uk.ac.warwick.dcs.SemEval.AnnotationMap#removeSliceShiftRightToLeft()}.
+	 */
+	@Test
+	public void testSliceRemove() {
+		this.testRegenerate();
+		this.map.removeSliceShiftRightToLeft(5);
+		for (Entry<Integer, AnnotationType>e : this.map.entrySet()) {
+			AnnotationType t = e.getValue();
+			int p = e.getKey();
+			if (t.getKind() == AnnotationKind.Neutral) {
+				if (p != 6) {
+					fail(String.format("%d, %s (unexpected)", p, t));
+				}
+			}
+			else if (t.getKind() == AnnotationKind.Positive) {
+				if (p!= 5) {
+					fail(String.format("%d, %s (unexpected)", p, t));
+				}
+			}
+			else if (t.getKind() == AnnotationKind.Negative) {
+				if (p != 1 && p != 2 && p != 7 && p != 8 && p != 9 && p != 10 && p != 11) {
+					fail(String.format("%d, %s (unexpected)", p, t));
+				}
+			}
+		}
+	}
+	/**
 	 * Test method for {@link uk.ac.warwick.dcs.SemEval.AnnotationMap#regenerate()}.
 	 */
 	@Test
