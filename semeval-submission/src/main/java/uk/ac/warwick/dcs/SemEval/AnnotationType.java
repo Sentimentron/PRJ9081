@@ -18,5 +18,13 @@ public class AnnotationType {
 	public boolean isSubjective() {
 		return this.type != AnnotationKind.Objective;
 	}
+
+	public AnnotationKind getKind() {
+		return this.type;
+	}
+	
+	public boolean equals(AnnotationKind k) {
+		return this.getKind() == k;
+	}
 	
 }

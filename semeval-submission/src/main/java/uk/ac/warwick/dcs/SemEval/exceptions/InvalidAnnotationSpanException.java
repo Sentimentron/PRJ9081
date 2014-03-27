@@ -1,6 +1,6 @@
 package uk.ac.warwick.dcs.SemEval.exceptions;
 
-public class InvalidAnnotationSpanException extends Exception {
+public class InvalidAnnotationSpanException extends RuntimeException {
 
 	private static final long serialVersionUID = -2510510073843636755L;
 	private int startOff;
