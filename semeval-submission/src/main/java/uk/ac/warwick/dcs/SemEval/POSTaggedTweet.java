@@ -12,7 +12,9 @@ import cmu.arktweetnlp.RawTwokenize;
 
 public class POSTaggedTweet extends Tweet {
 
-	private List<RawTagger.TaggedToken> tokens;
+	private List<RawTagger.TaggedToken> rawTokens;
+	private List<POSToken> tokens;
+	private WordRangeMap wm;
 	
 	public POSTaggedTweet(Tweet t, RawTagger tagger) throws WordRangeMapException {
 		super(t.getText(), t.getAnnotations());
@@ -54,6 +56,17 @@ public class POSTaggedTweet extends Tweet {
 		textReadyToTokenize = rightMatcher.replaceAll("$1 $2$3");
 		
 		this.text   = textReadyToTokenize;
-		this.tokens = tagger.tokenizeAndTag(textReadyToTokenize);
+		this.wm     = new WordRangeMap(this.text);
+		this.rawTokens = tagger.tokenizeAndTag(textReadyToTokenize);
+		this.tokens = new ArrayList<POSToken>();
+		for (RawTagger.TaggedToken token : this.rawTokens) {
+			this.tokens.add(new POSToken(token, this.wm));
+		}
+		for (POSToken t : this.tokens) {
+			for (int i = t.startWordOffset; i <= t.endWordOffset; i++) {
+				t.annotate(this.annotations.get(i));
+			}
+		}
+		
 	}
 }

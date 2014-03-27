@@ -20,6 +20,11 @@ public class WordRangeMap {
 		this.wordOffsetMap = new TreeMap<Integer, String>();
 	}
 	
+	public WordRangeMap(String text) {
+		this();
+		this.addString(text);
+	}
+
 	public void addWord(String s) {
 		int wordLength = s.length();
 		this.wordOffsetMap.put(this.currentWordOffset, s);

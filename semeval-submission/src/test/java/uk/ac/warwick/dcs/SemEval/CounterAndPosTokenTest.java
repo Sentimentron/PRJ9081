@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+
 public class CounterAndPosTokenTest {
 
 	@Test
@@ -38,6 +40,14 @@ public class CounterAndPosTokenTest {
 		assertEquals((int)c.put(tag2), 1);
 		assertEquals((int)c.get(tag2), 1);
 		assertEquals((int)c.get(tag3), 0);
+	}
+	
+	@Test
+	public void posAssignmentCheck() {
+		POSToken t = new POSToken(0.1, 4, 5, 1, 1, ",", ",");
+		assertEquals(t.setAnnotation(new AnnotationType(AnnotationKind.Positive)), true);
+		assertEquals(t.setAnnotation(new AnnotationType(AnnotationKind.Positive)), true);
+		assertEquals(t.setAnnotation(new AnnotationType(AnnotationKind.Negative)), false);
 	}
 
 }

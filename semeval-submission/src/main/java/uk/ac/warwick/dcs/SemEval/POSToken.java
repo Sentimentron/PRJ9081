@@ -13,7 +13,7 @@ public class POSToken implements Comparable<POSToken> {
 	public final int endWordOffset;
 	public final int startWordOffset;
 
-	private AnnotationType annotation;
+	private AnnotationType annotation = null;
 	
 	public POSToken(RawTagger.TaggedToken r, WordRangeMap wm) throws WordRangeMapException {
 		this.posConfidence = r.confidence;
@@ -47,6 +47,22 @@ public class POSToken implements Comparable<POSToken> {
 		int comparison = this.tag.compareTo(o.tag);
 		comparison += this.token.compareTo(o.token);
 		return comparison;
+	}
+	
+	public boolean setAnnotation(AnnotationType t) {
+		boolean ret = true;
+		if (this.annotation != null) {
+			if (!this.annotation.equals(t)) {
+				System.err.println("Warning: setAnnotation already called with something different!");
+				ret = false;
+			}
+		}
+		this.annotation = t;
+		return ret;
+	}
+	
+	public AnnotationType getAnnotation() {
+		return this.annotation;
 	}
 	
 }

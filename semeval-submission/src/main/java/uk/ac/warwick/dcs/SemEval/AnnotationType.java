@@ -27,4 +27,7 @@ public class AnnotationType {
 		return this.getKind() == k;
 	}
 	
+	public boolean equals(AnnotationType t) {
+		return this.getKind() == t.getKind();
+	}
 }
