@@ -44,6 +44,26 @@ public class SemEvalTaskAReader {
 			   ret.put(identity, obj);
 		   }
 		   
+		   int approximateWords = tweet.split(" ").length;
+		   if (end > approximateWords) {
+			   System.err.printf(
+					   "Warning: truncating annotation for "
+					 + "'%s' (%d, %d) to %d (maximum length)\n", 
+					 tweet, identifier1, identifier2, 
+					 approximateWords
+				);
+			   end = approximateWords;
+		   }
+		   if (start > approximateWords) {
+			   System.err.printf(
+					   "Warning: truncating annotation for "
+					 + "'%s' (%d, %d) to %d (maximum start)\n", 
+					 tweet, identifier1, identifier2, 
+					 approximateWords
+				);
+			   start = approximateWords;
+		   }
+		   
 		   AnnotationType spanPolarity = AnnotationType.fromSemEvalString(polarity);
 		   AnnotationSpan span = new AnnotationSpan(spanPolarity.getKind(), start, end);
 		   obj.addAnnotation(span);
