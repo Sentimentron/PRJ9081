@@ -19,11 +19,24 @@ public class SentimentApp {
 	protected Set<String> modifierWords;
 	protected Map<String, Attribute> attrMap;
 	
-	public SentimentApp() throws IOException {
-		this.r = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");				
+	public SentimentApp(String model) throws IOException {
 		this.sm = new SubjectivityMap();
 		this.posTagger = new RawTagger();
-		posTagger.loadModel("model.20120919");
+		posTagger.loadModel(model);
+	}
+	
+	public SentimentApp(String model, String tweets) throws IOException {
+		this(model);
+		this.r = new SemEvalTaskAReader(tweets);
+	}
+	
+	public SentimentApp(List<Tweet> tweets) throws IOException {
+		this("model.20120919");
+		this.tweets = tweets;
+	}
+	
+	public SentimentApp() throws IOException {
+		this("model.20120919","tweeter-dev-full-A-tweets.tsv");
 	}
 	
 	protected void readTweets() throws Exception {
