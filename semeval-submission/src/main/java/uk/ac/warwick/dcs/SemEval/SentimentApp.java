@@ -19,6 +19,14 @@ public class SentimentApp {
 	protected Set<String> modifierWords;
 	protected Map<String, Attribute> attrMap;
 	
+	public SubjectivityMap getSubjectivityMap() {
+		return this.sm;
+	}
+	
+	public List<Tweet> getTweets() {
+		return this.tweets;
+	}
+	
 	public SentimentApp(String model) throws IOException {
 		this.sm = new SubjectivityMap();
 		this.posTagger = new RawTagger();
@@ -55,5 +63,9 @@ public class SentimentApp {
 		for (POSTaggedTweet t : this.taggedTweets) {
 			this.sm.updateFromTweet(t);
 		}
+	}
+	
+	protected void setSubjectivityMap(SubjectivityMap sm) {
+		this.sm = sm;
 	}
 }

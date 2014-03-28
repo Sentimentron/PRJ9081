@@ -12,7 +12,7 @@ public class Tweet {
 		String[] arr;
 		
 		this.text = text;
-		arr = this.text.split(" ");
+		arr = this.text.split("[ ,]"); //TODO should roll this into WordRangeMap
 		this.annotations = new AnnotationMap(AnnotationMap.DuplicationStrategy.Replace);
 		this.maxLength = arr.length;
 	}

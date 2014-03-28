@@ -77,7 +77,7 @@ public class SubjectivityApp extends SentimentApp {
     	return new SimpleLogistic();
     }
     
-    protected AbstractClassifier buildClassifier() throws Exception {
+    public AbstractClassifier buildClassifier() throws Exception {
     	Instances setInstances = this.generateTrainingInstances();
     	AbstractClassifier clf = this.getUntrainedClassifier();
     	clf.buildClassifier(setInstances);
@@ -187,6 +187,15 @@ public class SubjectivityApp extends SentimentApp {
     			AnnotationType a = new AnnotationType(predictionStr);
     			m.getWrappedTweet().applyDerivedAnnotation(dat.first, a);
     		}
+    	}
+    	
+    	// POS tags create copies of their parents
+    	// We've just applied subjectivity annotations to their parents
+    	// We need to replace our original tweets with those
+    	this.tweets.clear();
+    	
+    	for (POSTaggedTweet p : this.taggedTweets) {
+    		this.tweets.add(p.getParent());
     	}
     	
     }

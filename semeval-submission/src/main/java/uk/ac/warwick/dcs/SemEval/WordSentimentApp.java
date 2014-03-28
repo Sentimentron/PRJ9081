@@ -22,6 +22,10 @@ public class WordSentimentApp extends SentimentApp {
 		// TODO Auto-generated constructor stub
 	}
 
+	public WordSentimentApp(List<Tweet> tweets) throws IOException {
+		super(tweets);
+	}
+
 	public static String processWord(String s) {
 		PorterStemmer stemmer = new PorterStemmer();
 		s = s.toLowerCase();
@@ -31,7 +35,7 @@ public class WordSentimentApp extends SentimentApp {
 		return s;
 	}
 	
-	private void createAttr() {
+	public void createAttr() {
 		this.modifierWords = new HashSet<String>();
 		this.attrMap       = new HashMap<String, Attribute>();
 		for (POSTaggedTweet t : this.taggedTweets) {
@@ -58,8 +62,12 @@ public class WordSentimentApp extends SentimentApp {
 		}
 	}
 	
-	private Map<String, Attribute> getAttributeMap() {
+	protected Map<String, Attribute> getAttributeMap() {
 		return this.attrMap;
+	}
+	
+	public void setAttributeMap(Map<String, Attribute> attrMap) {
+		this.attrMap = attrMap;
 	}
 	
 	private ArrayList<Attribute> getAttributes() {
@@ -70,7 +78,7 @@ public class WordSentimentApp extends SentimentApp {
 		return attrs;
 	}
 	
-	private Instances createInstances() {
+	public Instances createInstances() {
 		
 		ArrayList<Attribute> attrs = this.getAttributes();
 		
@@ -111,6 +119,11 @@ public class WordSentimentApp extends SentimentApp {
 					
 					// Set the column
 					Attribute toSet = this.attrMap.get(s);
+					if (toSet == null) {
+						System.err.printf("WARNING: can't find '%s' attribute\n", s);
+						continue;
+					}
+					
 					if (i < j) {
 						outputInstance.setValue(toSet, "after");
 					}
@@ -152,10 +165,10 @@ public class WordSentimentApp extends SentimentApp {
 		
 		Instances toExport = wa.createInstances();
 		
-		 BufferedWriter writer = new BufferedWriter(new FileWriter("sentiment.arff"));
-		 writer.write(toExport.toString());
-		 writer.flush();
-		 writer.close();
+		BufferedWriter writer = new BufferedWriter(new FileWriter("sentiment.arff"));
+		writer.write(toExport.toString());
+		writer.flush();
+		writer.close();
 	}
 
 }
