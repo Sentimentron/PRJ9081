@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.SemEval;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,15 +9,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import sun.security.jca.GetInstance.Instance;
+import opennlp.tools.stemmer.Stemmer;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.FastVector;
 import weka.core.Instances;
-import weka.core.converters.ArffSaver;
 import cmu.arktweetnlp.RawTagger;
 
 public class WordSentimentApp {
+	
+	public static String processWord(String s) {
+		PorterStemmer stemmer = new PorterStemmer();
+		s = s.toLowerCase();
+		s = stemmer.stem(s);
+		s = s.replaceAll("[^a-z]", "");
+		return s;
+	}
 
 	public static void main(String[] args) throws Exception {
 		
@@ -27,8 +33,10 @@ public class WordSentimentApp {
 		SemEvalTaskAReader r = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");
 		List<Tweet> tweets = r.readTweets();
 		
-		SubjectivityMap sm = new SubjectivityMap();
+		PorterStemmer stemmer = new PorterStemmer();
 		
+		SubjectivityMap sm = new SubjectivityMap();
+				
 		RawTagger posTagger = new RawTagger();
 		posTagger.loadModel("model.20120919");
 		
@@ -39,12 +47,16 @@ public class WordSentimentApp {
 		}
 		
 		// Go through POS-tagged tweets and pull out the ADVERB (R) tags
+		// also pull out any subjective information
 		Set<String> modifierWords = new HashSet<String>();
 		for (POSTaggedTweet t : taggedTweets) {
 			sm.updateFromTweet(t);
 			for (POSToken pt : t.getPOSTokens()) {
 				if (pt.tag.equals("R")) {
-					modifierWords.add(pt.token);
+					modifierWords.add(processWord(pt.token));
+				}
+				if (pt.getAnnotation().isSubjective()) {
+					modifierWords.add(processWord(pt.token));
 				}
 			}
 		}
@@ -54,6 +66,7 @@ public class WordSentimentApp {
 		nominalVals.add("before");
 		nominalVals.add("after");
 		nominalVals.add("notPresent");
+		nominalVals.add("present");
 		
 		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
 		Map<String, Attribute> attrMap = new HashMap<String, Attribute>();
@@ -88,10 +101,13 @@ public class WordSentimentApp {
 				Set<Attribute> currentlyNotSet = new HashSet<Attribute>(attrMap.values());
 				for (int j = 0; j < pt.size(); j++) {
 					POSToken p = pt.get(j);
-					if (!p.tag.equals("R")) continue;
-					Attribute toSet = attrMap.get(p.token);
+					if (!p.tag.equals("R") && !p.getAnnotation().isSubjective()) continue;
+					Attribute toSet = attrMap.get(processWord(p.token));
 					if (i < j) {
 						outputInstance.setValue(toSet, "after");
+					}
+					else if (i == j) {
+						outputInstance.setValue(toSet, "present");
 					}
 					else {
 						outputInstance.setValue(toSet, "before");

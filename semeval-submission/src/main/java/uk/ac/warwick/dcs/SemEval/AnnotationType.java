@@ -37,6 +37,10 @@ public class AnnotationType {
 		}
 	}
 	
+	public AnnotationType clone() {
+		return new AnnotationType(this.getKind());
+	}
+	
 	public static AnnotationType fromSemEvalString(String s) throws Exception {
 		if(s.equals("negative")) return new AnnotationType(AnnotationKind.Negative);
 		else if (s.equals("positive")) return new AnnotationType(AnnotationKind.Positive);

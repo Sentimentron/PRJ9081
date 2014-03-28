@@ -46,7 +46,7 @@ public class POSToken implements Comparable<POSToken> {
 	
 	public POSToken clone() {
 		return new POSToken(this.posConfidence, this.startCharOffset, this.endCharOffset,
-							this.startWordOffset, this.endWordOffset, this.tag, this.token, this.annotation);
+							this.startWordOffset, this.endWordOffset, this.tag, this.token, this.getAnnotation().clone());
 	}
 
 	@Override
