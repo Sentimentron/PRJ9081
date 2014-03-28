@@ -107,9 +107,6 @@ public class POSTaggedTweet extends Tweet {
 		for (POSToken token : this.tokens) {
 			for (int i = token.startWordOffset; i <= token.endWordOffset; i++) {
 				AnnotationType an = this.annotations.get(i);
-				if (i == 3) {
-					System.out.printf("3: %s", an);
-				}
 				if (an != null) {
 					token.setAnnotation(an);
 				}
