@@ -27,6 +27,7 @@ public class WordSentimentApp {
 		SemEvalTaskAReader r = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");
 		List<Tweet> tweets = r.readTweets();
 		
+		SubjectivityMap sm = new SubjectivityMap();
 		
 		RawTagger posTagger = new RawTagger();
 		posTagger.loadModel("model.20120919");
@@ -40,6 +41,7 @@ public class WordSentimentApp {
 		// Go through POS-tagged tweets and pull out the ADVERB (R) tags
 		Set<String> modifierWords = new HashSet<String>();
 		for (POSTaggedTweet t : taggedTweets) {
+			sm.updateFromTweet(t);
 			for (POSToken pt : t.getPOSTokens()) {
 				if (pt.tag.equals("R")) {
 					modifierWords.add(pt.token);
@@ -62,7 +64,8 @@ public class WordSentimentApp {
 		
 		Map<String, Attribute> fullAttrMap = new HashMap<String, Attribute>(attrMap);
 		
-		fullAttrMap.put("classificationWord", new Attribute("classificationWord", (FastVector)null));
+		// fullAttrMap.put("classificationWord", new Attribute("classificationWord", (FastVector)null));
+		fullAttrMap.put("classificationSubValue", new Attribute("classifionSubValue"));
 		Attribute sentimentClassAttr = new Attribute("sentimentClass", AnnotationType.getNominalList());
 		
 		for (Map.Entry<String, Attribute> e : fullAttrMap.entrySet()) {
@@ -70,7 +73,6 @@ public class WordSentimentApp {
 		}
 		
 		attrs.add(sentimentClassAttr);
-		
 		
 		Instances toExport = new Instances("sentiment", attrs, 0);
 		toExport.setClass(sentimentClassAttr);
@@ -100,7 +102,7 @@ public class WordSentimentApp {
 					outputInstance.setValue(attr, "notPresent");
 				}
 				
-				outputInstance.setValue(fullAttrMap.get("classificationWord"), pt.get(i).token);
+				outputInstance.setValue(fullAttrMap.get("classificationSubValue"), sm.get(pt.get(i)));
 				outputInstance.setValue(sentimentClassAttr, a.toNominalSentiment());
 				
 				toExport.add(outputInstance);
