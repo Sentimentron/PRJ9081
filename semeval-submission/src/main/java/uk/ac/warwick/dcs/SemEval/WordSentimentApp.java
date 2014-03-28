@@ -14,10 +14,14 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.FastVector;
 import weka.core.Instances;
-import cmu.arktweetnlp.RawTagger;
 
-public class WordSentimentApp {
+public class WordSentimentApp extends SentimentApp {
 	
+	public WordSentimentApp() throws IOException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public static String processWord(String s) {
 		PorterStemmer stemmer = new PorterStemmer();
 		s = s.toLowerCase();
@@ -25,39 +29,6 @@ public class WordSentimentApp {
 		s = s.replaceAll("[^a-z]", "");
 		s = s.trim();
 		return s;
-	}
-	
-	private SemEvalTaskAReader r;
-	private SubjectivityMap sm;
-	private RawTagger posTagger;
-	private List<Tweet> tweets;
-	private List<POSTaggedTweet> taggedTweets;
-	private Set<String> modifierWords;
-	private Map<String, Attribute> attrMap;
-	
-	public WordSentimentApp() throws IOException {
-		this.r = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");				
-		this.sm = new SubjectivityMap();
-		this.posTagger = new RawTagger();
-		posTagger.loadModel("model.20120919");
-	}
-	
-	private void readTweets() throws Exception {
-		this.tweets = this.r.readTweets();
-	}
-	
-	private void posTagTweets() throws Exception {
-		this.taggedTweets = new ArrayList<POSTaggedTweet>();
-		for (Tweet t : tweets) {
-			POSTaggedTweet p = new POSTaggedTweet(t, posTagger);
-			taggedTweets.add(p);
-		}
-	}
-	
-	private void updateSubjectivityMap() {
-		for (POSTaggedTweet t : this.taggedTweets) {
-			this.sm.updateFromTweet(t);
-		}
 	}
 	
 	private void createAttr() {
