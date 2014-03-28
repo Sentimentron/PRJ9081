@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import weka.classifiers.AbstractClassifier;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.FastVector;
@@ -163,12 +164,33 @@ public class WordSentimentApp extends SentimentApp {
 		wa.updateSubjectivityMap();
 		wa.createAttr();
 		
+		wa.selfEvaluate();
+    	wa.crossValidate();
+    	wa.crossValidateSentences();	
+		
 		Instances toExport = wa.createInstances();
 		
 		BufferedWriter writer = new BufferedWriter(new FileWriter("sentiment.arff"));
 		writer.write(toExport.toString());
 		writer.flush();
 		writer.close();
+	}
+
+	@Override
+	protected AbstractClassifier getUntrainedClassifier() {
+		
+	}
+
+	@Override
+	protected AbstractClassifier buildClassifier() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void crossValidateSentences() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

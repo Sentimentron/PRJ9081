@@ -46,7 +46,7 @@ public class SubjectivityApp extends SentimentApp {
 		return attrs;
 	}
     
-    protected Instances generateTrainingInstances(List<MLSubjectiveTweet> learningTweets,
+    protected Instances createInstances(List<MLSubjectiveTweet> learningTweets,
     		SubjectivityMap sm) {
     	Instances setInstances = new Instances("subj", this.getAttributes(), 0);
 		setInstances.setClassIndex(3);
@@ -65,31 +65,26 @@ public class SubjectivityApp extends SentimentApp {
 		return setInstances;
     }
     
-    protected Instances generateTrainingInstances(List<MLSubjectiveTweet> lT) {
-    	return this.generateTrainingInstances(lT, this.sm);
+    protected Instances createInstances(List<MLSubjectiveTweet> lT) {
+    	return this.createInstances(lT, this.sm);
     }
     
-    protected Instances generateTrainingInstances() {
-    	return this.generateTrainingInstances(this.getLearningTweets());
+    @Override
+    protected Instances createInstances() {
+    	return this.createInstances(this.getLearningTweets());
     }
     
+    @Override
     protected AbstractClassifier getUntrainedClassifier() {
     	return new SimpleLogistic();
     }
     
+    @Override
     public AbstractClassifier buildClassifier() throws Exception {
-    	Instances setInstances = this.generateTrainingInstances();
+    	Instances setInstances = this.createInstances();
     	AbstractClassifier clf = this.getUntrainedClassifier();
     	clf.buildClassifier(setInstances);
     	return clf;
-    }
-    
-    protected static void printEvaluationSummary(Evaluation elv) throws Exception {
-    	System.out.println(elv.toClassDetailsString());
-		System.out.println(elv.toSummaryString());
-		System.out.println(elv.toClassDetailsString());
-		System.out.println(elv.toMatrixString());
-		System.out.println(elv);
     }
     
     protected List<MLSubjectiveTweet> getLearningTweets() {
@@ -99,32 +94,6 @@ public class SubjectivityApp extends SentimentApp {
 			learningTweets.add(m);
 		}
 		return learningTweets;
-    }
-    
-    protected void selfEvaluate(boolean suppressPrint) throws Exception {
-    	Instances setInstances = this.generateTrainingInstances();
-    	Classifier clfSelf = this.getUntrainedClassifier();
-		Evaluation elvSelf = new Evaluation(setInstances);
-		if (!suppressPrint) {
-			System.out.println("***SELF EVALUATION***");
-		}
-    	clfSelf.buildClassifier(setInstances);
-		elvSelf.evaluateModel(clfSelf, setInstances);
-		SubjectivityApp.printEvaluationSummary(elvSelf);
-    }
-    
-    protected void selfEvaluate() throws Exception {
-    	this.selfEvaluate(false);
-    }
-    
-    protected void crossValidate() throws Exception {
-    	Instances setInstances = this.generateTrainingInstances();
-    	AbstractClassifier clfCross = this.getUntrainedClassifier();
-		Evaluation elvCross = new Evaluation(setInstances);
-		System.out.println("***CROSS VALIDATION (10 folds)***");
-		elvCross.crossValidateModel(clfCross, setInstances, 10, new Random());
-		SubjectivityApp.printEvaluationSummary(elvCross);
-
     }
     
     protected void crossValidateSentences(int fold, List<MLSubjectiveTweet> learningTweets) 
@@ -150,8 +119,8 @@ public class SubjectivityApp extends SentimentApp {
 		
 		AbstractClassifier clfSent = this.getUntrainedClassifier();
 		
-		Instances trainingInstances = this.generateTrainingInstances(trainingSet, sm);
-		Instances testingInstances  = this.generateTrainingInstances(testingSet, sm);
+		Instances trainingInstances = this.createInstances(trainingSet, sm);
+		Instances testingInstances  = this.createInstances(testingSet, sm);
 		
 		clfSent.buildClassifier(trainingInstances);
 		
@@ -164,6 +133,7 @@ public class SubjectivityApp extends SentimentApp {
 		System.out.println(foldElv.toMatrixString());
     }
     
+    @Override
     protected void crossValidateSentences() throws Exception {
 		System.out.println("***CROSS VALIDATION (sentences, 10 folds)***");
 		List<MLSubjectiveTweet> learningTweets = this.getLearningTweets();
