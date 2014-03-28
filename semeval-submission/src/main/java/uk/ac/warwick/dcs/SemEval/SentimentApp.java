@@ -70,6 +70,11 @@ public abstract class SentimentApp {
 		this("model.20120919");
 		this.tweets = tweets;
 	}
+	
+	public SentimentApp(SemEvalTaskAReader r) throws IOException {
+		this("model.20120919");
+		this.r = r;
+	}
 
 	/**
 	 * Creates a SentimentApp with default parameters.
