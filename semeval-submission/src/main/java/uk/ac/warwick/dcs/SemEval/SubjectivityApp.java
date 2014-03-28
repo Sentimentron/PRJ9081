@@ -18,6 +18,7 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import cmu.arktweetnlp.RawTagger;
+import edu.stanford.nlp.util.Pair;
 
 /**
  * Hello world!
@@ -169,6 +170,25 @@ public class SubjectivityApp extends SentimentApp {
     	for (int fold = 0; fold < 10; fold ++) {
     		this.crossValidateSentences(fold, learningTweets);
     	}
+    }
+    
+    protected void applyPredictions(AbstractClassifier clf, SubjectivityMap s) throws Exception {
+    	
+    	Instance instanceTemplate = new DenseInstance(4);
+    	ArrayList<Attribute> attrList = this.getAttributes();
+    	Instances setInstances = new Instances("subj", attrList, 0);
+    	setInstances.setClassIndex(3);
+    	
+    	for (MLSubjectiveTweet m : this.getLearningTweets()) {
+    		for (Pair<Integer, Instance> dat : 
+    			m.getPredictionInstances(instanceTemplate, setInstances, s)) {
+    			double prediction = clf.classifyInstance(dat.second);
+    			String predictionStr = classAttr.value((int) prediction);
+    			AnnotationType a = new AnnotationType(predictionStr);
+    			m.getWrappedTweet().applyDerivedAnnotation(dat.first, a);
+    		}
+    	}
+    	
     }
     
 	public static void main( String[] args ) throws Exception
