@@ -3,3 +3,21 @@
 * Figure out Positive/Negative/Neutral annotation
 * Try on the test dataset
 * Write everything to a SemEval-formatted file
+
+
+
+Marias List
+
+* (1) Bigrams + PNE + gimpel
+* (2) Bigrams + PNE + gimpel + lemmatisation, stopwords, thresholding
+* (3) Try the above adding Semeval training data and testing on development is putting all data together (Finance+Tec+Politics+Semeval training) and testing on Semeval * development data (so we get and idea of how we perform)*
+* (4) Is trying Finance+Tech+Politics+Semeval training and Dev (possible submission for unconstrained run)*
+* (5) Is trying Finance+Tech+Politics+Semeval training and doing domain adaptation on Dev, and evaluation on Dev
+* (6) Finance+Tech+Politics+Semeval training + dev and doing domain adaptation on Semeval test, submitting results on test (possible submission for unconstrained)
+For the constrained submission: Use the best performing types of data as assessed in (1) and (2) by using only training data from Semeval.
+To check performance  you would train on Semeval training and test on development.
+Also train on Semeval training, domain adaptation on development and testing on development
+* (7) Constrained: To check performance  you would train on Semeval training and test on development.
+* (8) Constrained with domain adaptation: You would train on Semeval training, domain adaptation on development and testing on development
+7 or 8 would help you determine the submission for the constrained. That would be either:
+* (9) Semeval training + semeval development. (10) Semeval training+ semeval dev + domain adaptation on semeval test data
