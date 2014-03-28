@@ -138,11 +138,9 @@ public abstract class SentimentApp {
 	 */
 	protected static void printEvaluationSummary(Evaluation elv)
 			throws Exception {
-		System.out.println(elv.toClassDetailsString());
 		System.out.println(elv.toSummaryString());
 		System.out.println(elv.toClassDetailsString());
 		System.out.println(elv.toMatrixString());
-		System.out.println(elv);
 	}
 
 	/**
