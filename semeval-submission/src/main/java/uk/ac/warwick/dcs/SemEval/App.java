@@ -3,6 +3,7 @@ package uk.ac.warwick.dcs.SemEval;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -85,5 +86,71 @@ public class App
 		System.out.println(elvCross.toSummaryString());
 		System.out.println(elvCross.toClassDetailsString());
 		System.out.println(elvCross.toMatrixString());
+		
+		System.out.println("***CROSS VALIDATION (sentences, 10 folds)***");
+		// Shuffle the sentences 
+		long seed = System.nanoTime();
+		Collections.shuffle(learningTweets, new Random(seed));		
+		for (int fold = 0; fold < 10; fold++) {
+			// Create the fold data
+			List<MLSubjectiveTweet> trainingSet = new ArrayList<MLSubjectiveTweet>();
+			List<MLSubjectiveTweet> testingSet  = new ArrayList<MLSubjectiveTweet>();
+			for (int i = 0; i < learningTweets.size(); i++) {
+				if (i % 10 == fold) {
+					trainingSet.add(learningTweets.get(i));
+				}
+				else {
+					testingSet.add(learningTweets.get(i));
+				}
+			}
+			
+			// Create classifier, subjectivity map etc
+			AbstractClassifier clfSent = new SimpleLogistic();
+			SubjectivityMap sm = new SubjectivityMap();
+			
+			// Update subjectivity map
+			for (MLSubjectiveTweet m : trainingSet) {
+				sm.updateFromTweet(m.getWrappedTweet());
+			}
+			
+			// Generate instances 
+			Instances foldInstances = new Instances("subj", attrs, 0);
+			foldInstances.setClassIndex(3);
+			
+			instanceTemplate = new DenseInstance(4);
+			instanceTemplate.setDataset(foldInstances);
+			
+			for (MLSubjectiveTweet m : trainingSet) {
+				for (Instance dat : m.addInstanceData(instanceTemplate, foldInstances, sm)) {
+					assertTrue(setInstances.checkInstance(dat));
+					foldInstances.add(dat);
+				}
+			}
+			
+			clfSent.buildClassifier(foldInstances);
+			
+			// Generate testing instances
+			foldInstances = new Instances("subj", attrs, 0);
+			foldInstances.setClassIndex(3);
+			
+			instanceTemplate = new DenseInstance(4);
+			instanceTemplate.setDataset(foldInstances);
+			
+			for (MLSubjectiveTweet m : testingSet) {
+				for (Instance dat : m.addInstanceData(instanceTemplate, foldInstances, sm)) {
+					assertTrue(setInstances.checkInstance(dat));
+					foldInstances.add(dat);
+				}
+			}
+			
+			Evaluation foldElv = new Evaluation(foldInstances);
+			foldElv.evaluateModel(clfSent, foldInstances);
+			System.out.printf("FOLD %d\n", fold);
+			System.out.println(foldElv.toClassDetailsString());
+			System.out.println(foldElv.toSummaryString());
+			System.out.println(foldElv.toClassDetailsString());
+			System.out.println(foldElv.toMatrixString());
+		}
+		
     }
 }
