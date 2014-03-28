@@ -20,7 +20,7 @@ import cmu.arktweetnlp.RawTagger;
  * Hello world!
  *
  */
-public class App 
+public class SubjectivityApp 
 {
     public static void main( String[] args ) throws Exception
     {
