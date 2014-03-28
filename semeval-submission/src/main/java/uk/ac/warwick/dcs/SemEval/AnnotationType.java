@@ -68,10 +68,36 @@ public class AnnotationType {
 		return "q";
 	}
 	
+	public String toNominalSentiment() {
+		switch(this.getKind()){
+		case Negative:
+			return "n";
+		case Neutral:
+			return "e";
+		case Positive:
+			return "p";
+		case Subjective:
+			return "s";
+		default:
+			return "q";
+			
+		}
+	}
+	
 	public static List<String> getNominalSubjList() {
 		List<String> ret = new ArrayList<String>();
 		ret.add("s");
 		ret.add("q");
 		return ret;
 	}
+	
+	public static List<String> getNominalList() {
+		List<String> ret = new ArrayList<String>();
+		ret.add("n");
+		ret.add("e");
+		ret.add("p");
+		ret.add("q");
+		return ret;
+	}
+	
 }
