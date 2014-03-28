@@ -34,6 +34,8 @@ public class SemEvalTaskAReader {
 		   String polarity = fields[4];
 		   String tweet    = fields[5];
 		   
+		   if (tweet.equals("Not Available")) continue;
+		   
 		   Tweet obj;
 		   Pair<Long, Integer> identity = new Pair<Long, Integer>(identifier1, identifier2);
 		   if(ret.containsKey(identity)) {
