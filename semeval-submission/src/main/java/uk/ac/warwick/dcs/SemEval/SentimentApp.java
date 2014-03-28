@@ -98,10 +98,18 @@ public abstract class SentimentApp {
 	 */
 	protected void posTagTweets() throws Exception {
 		this.taggedTweets = new ArrayList<POSTaggedTweet>();
+		int counter = 0;
+		int total   = this.tweets.size();
 		for (Tweet t : tweets) {
 			POSTaggedTweet p = new POSTaggedTweet(t, posTagger);
 			taggedTweets.add(p);
+			counter++;
+
+			if (((counter % 100 == 0) && (counter != 0)) || counter == total) {
+				System.err.printf("POS tagging... (%d/%d done, %.2f %%)\r", counter, total, counter*100.0f/total);
+			}
 		}
+		System.err.println();
 	}
 
 	/**
