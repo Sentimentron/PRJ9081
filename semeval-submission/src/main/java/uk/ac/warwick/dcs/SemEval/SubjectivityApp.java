@@ -98,6 +98,7 @@ public class SubjectivityApp extends SentimentApp {
     
     protected void crossValidateSentences(int fold, List<MLSubjectiveTweet> learningTweets) 
     		throws Exception {
+    	
 		Collections.shuffle(learningTweets, new Random(System.nanoTime()));
 		
 		List<MLSubjectiveTweet> trainingSet = new ArrayList<MLSubjectiveTweet>();
@@ -127,10 +128,7 @@ public class SubjectivityApp extends SentimentApp {
 		Evaluation foldElv = new Evaluation(testingInstances);
 		foldElv.evaluateModel(clfSent, testingInstances);
 		System.out.printf("FOLD %d\n", fold);
-		System.out.println(foldElv.toClassDetailsString());
-		System.out.println(foldElv.toSummaryString());
-		System.out.println(foldElv.toClassDetailsString());
-		System.out.println(foldElv.toMatrixString());
+		SentimentApp.printEvaluationSummary(foldElv);
     }
     
     @Override

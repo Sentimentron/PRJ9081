@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 import weka.classifiers.AbstractClassifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.FastVector;
@@ -81,6 +84,11 @@ public class WordSentimentApp extends SentimentApp {
 	
 	public Instances createInstances() {
 		
+		return this.createInstances(this.taggedTweets);
+	}
+	
+	public Instances createInstances(List<POSTaggedTweet> taggedTweets) {
+		
 		ArrayList<Attribute> attrs = this.getAttributes();
 		
 		Attribute sentimentClassAttr = new Attribute(
@@ -92,7 +100,7 @@ public class WordSentimentApp extends SentimentApp {
 		Instances toExport = new Instances("sentiment", attrs, 0);
 		toExport.setClass(sentimentClassAttr);
 		
-		for (POSTaggedTweet t : this.taggedTweets) {
+		for (POSTaggedTweet t : taggedTweets) {
 			List<POSToken> pt = t.getPOSTokens();
 			for (int i = 0; i < pt.size(); i++) {
 				
@@ -178,19 +186,49 @@ public class WordSentimentApp extends SentimentApp {
 
 	@Override
 	protected AbstractClassifier getUntrainedClassifier() {
-		
+		return new RandomForest();
 	}
 
 	@Override
 	protected AbstractClassifier buildClassifier() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Instances instances = this.createInstances();
+		AbstractClassifier clf = this.getUntrainedClassifier();
+		clf.buildClassifier(instances);
+		return clf;
 	}
 
+	protected void crossValidateSentence(int fold, List<POSTaggedTweet> learningTweets) throws Exception {
+		Collections.shuffle(learningTweets);
+		
+		List<POSTaggedTweet> trainingSet = new ArrayList<POSTaggedTweet>();
+		List<POSTaggedTweet> testingSet  = new ArrayList<POSTaggedTweet>();
+		for (int i = 0; i < learningTweets.size(); i++) {
+			if (i % 10 == fold) {
+				trainingSet.add(learningTweets.get(i));
+			}
+			else {
+				testingSet.add(learningTweets.get(i));
+			}
+		}
+		
+		AbstractClassifier clf = this.getUntrainedClassifier();
+		
+		Instances trainingInstances = this.createInstances(trainingSet);
+		Instances testingInstances = this.createInstances(trainingSet);
+		
+		clf.buildClassifier(trainingInstances);
+		
+		Evaluation elv = new Evaluation(testingInstances);
+		elv.evaluateModel(clf, testingInstances);
+		
+		SentimentApp.printEvaluationSummary(elv);
+	}
+	
 	@Override
 	protected void crossValidateSentences() throws Exception {
-		// TODO Auto-generated method stub
-		
+		for (int fold = 0; fold < 10; fold++) {
+			this.crossValidateSentence(fold, this.taggedTweets);
+		}
 	}
 
 }

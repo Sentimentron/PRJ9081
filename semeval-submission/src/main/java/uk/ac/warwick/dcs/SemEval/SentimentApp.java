@@ -92,7 +92,7 @@ public abstract class SentimentApp {
 		}
 		clfSelf.buildClassifier(setInstances);
 		elvSelf.evaluateModel(clfSelf, setInstances);
-		SubjectivityApp.printEvaluationSummary(elvSelf);
+		SentimentApp.printEvaluationSummary(elvSelf);
 	}
 
 	protected void selfEvaluate() throws Exception {
@@ -105,7 +105,7 @@ public abstract class SentimentApp {
 		Evaluation elvCross = new Evaluation(setInstances);
 		System.out.println("***CROSS VALIDATION (10 folds)***");
 		elvCross.crossValidateModel(clfCross, setInstances, 10, new Random());
-		SubjectivityApp.printEvaluationSummary(elvCross);
+		SentimentApp.printEvaluationSummary(elvCross);
 	}
 
 	protected abstract Instances createInstances();
