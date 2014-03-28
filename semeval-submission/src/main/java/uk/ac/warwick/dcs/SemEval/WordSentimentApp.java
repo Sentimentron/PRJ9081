@@ -2,6 +2,7 @@ package uk.ac.warwick.dcs.SemEval;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import opennlp.tools.stemmer.Stemmer;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.FastVector;
@@ -26,32 +26,44 @@ public class WordSentimentApp {
 		s = s.trim();
 		return s;
 	}
-
-	public static void main(String[] args) throws Exception {
-		
-		//
-		// Reading tweets
-		SemEvalTaskAReader r = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");
-		List<Tweet> tweets = r.readTweets();
-		
-		PorterStemmer stemmer = new PorterStemmer();
-		
-		SubjectivityMap sm = new SubjectivityMap();
-				
-		RawTagger posTagger = new RawTagger();
+	
+	private SemEvalTaskAReader r;
+	private SubjectivityMap sm;
+	private RawTagger posTagger;
+	private List<Tweet> tweets;
+	private List<POSTaggedTweet> taggedTweets;
+	private Set<String> modifierWords;
+	private Map<String, Attribute> attrMap;
+	
+	public WordSentimentApp() throws IOException {
+		this.r = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");				
+		this.sm = new SubjectivityMap();
+		this.posTagger = new RawTagger();
 		posTagger.loadModel("model.20120919");
-		
-		List<POSTaggedTweet> taggedTweets = new ArrayList<POSTaggedTweet>();
+	}
+	
+	private void readTweets() throws Exception {
+		this.tweets = this.r.readTweets();
+	}
+	
+	private void posTagTweets() throws Exception {
+		this.taggedTweets = new ArrayList<POSTaggedTweet>();
 		for (Tweet t : tweets) {
 			POSTaggedTweet p = new POSTaggedTweet(t, posTagger);
 			taggedTweets.add(p);
 		}
-		
-		// Go through POS-tagged tweets and pull out the ADVERB (R) tags
-		// also pull out any subjective information
-		Set<String> modifierWords = new HashSet<String>();
-		for (POSTaggedTweet t : taggedTweets) {
-			sm.updateFromTweet(t);
+	}
+	
+	private void updateSubjectivityMap() {
+		for (POSTaggedTweet t : this.taggedTweets) {
+			this.sm.updateFromTweet(t);
+		}
+	}
+	
+	private void createAttr() {
+		this.modifierWords = new HashSet<String>();
+		this.attrMap       = new HashMap<String, Attribute>();
+		for (POSTaggedTweet t : this.taggedTweets) {
 			for (POSToken pt : t.getPOSTokens()) {
 				if (pt.tag.equals("R") || pt.getAnnotation().isSubjective()) {
 					String stemmed = processWord(pt.token);
@@ -68,43 +80,66 @@ public class WordSentimentApp {
 		nominalVals.add("notPresent");
 		nominalVals.add("present");
 		
-		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
-		Map<String, Attribute> attrMap = new HashMap<String, Attribute>();
+		this.attrMap = new HashMap<String, Attribute>();
 		for (String modifierWord : modifierWords) {
 			Attribute at = new Attribute(modifierWord, nominalVals);
-			attrMap.put(modifierWord, at);
+			this.attrMap.put(modifierWord, at);
 		}
-		
-		Map<String, Attribute> fullAttrMap = new HashMap<String, Attribute>(attrMap);
-		
-		// fullAttrMap.put("classificationWord", new Attribute("classificationWord", (FastVector)null));
-		fullAttrMap.put("classificationSubValue", new Attribute("classifionSubValue"));
-		Attribute sentimentClassAttr = new Attribute("sentimentClass", AnnotationType.getNominalList());
-		
-		for (Map.Entry<String, Attribute> e : fullAttrMap.entrySet()) {
+	}
+	
+	private Map<String, Attribute> getAttributeMap() {
+		return this.attrMap;
+	}
+	
+	private ArrayList<Attribute> getAttributes() {
+		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
+		for (Map.Entry<String, Attribute> e : this.attrMap.entrySet()) {
 			attrs.add(e.getValue());
 		}
+		return attrs;
+	}
+	
+	private Instances createInstances() {
+		
+		ArrayList<Attribute> attrs = this.getAttributes();
+		
+		Attribute sentimentClassAttr = new Attribute(
+				"sentimentClass", AnnotationType.getNominalList()
+				);
 		
 		attrs.add(sentimentClassAttr);
 		
 		Instances toExport = new Instances("sentiment", attrs, 0);
 		toExport.setClass(sentimentClassAttr);
-		for (POSTaggedTweet t : taggedTweets) {
-			
+		
+		for (POSTaggedTweet t : this.taggedTweets) {
 			List<POSToken> pt = t.getPOSTokens();
 			for (int i = 0; i < pt.size(); i++) {
+				
+				// Don't bother exporting objective stuff
 				AnnotationType a = t.annotations.get(i);
 				if (a == null) continue;
 				if (!a.isSubjective()) continue;
-				DenseInstance outputInstance = new DenseInstance(modifierWords.size() + 2);
+				
+				// Create an instance which represents the context 
+				// of a given annotation
+				DenseInstance outputInstance = new DenseInstance(attrs.size());
 				outputInstance.setDataset(toExport);
+				
+				// This keeps track of what's not in this tweet
 				Set<Attribute> currentlyNotSet = new HashSet<Attribute>(attrMap.values());
+				
 				for (int j = 0; j < pt.size(); j++) {
 					POSToken p = pt.get(j);
+					// Ignore if not an adverb or anything subjective
 					if (!p.tag.equals("R") && !p.getAnnotation().isSubjective()) continue;
+					
+					// If the word is blank, don't process
 					String s = processWord(p.token);
 					if (s.length() == 0) continue;
-					Attribute toSet = attrMap.get(s);
+					
+					// Set the column
+					Attribute toSet = this.attrMap.get(s);
 					if (i < j) {
 						outputInstance.setValue(toSet, "after");
 					}
@@ -114,18 +149,37 @@ public class WordSentimentApp {
 					else {
 						outputInstance.setValue(toSet, "before");
 					}
+					
+					// Don't need to mark this as not present
 					currentlyNotSet.remove(toSet);
 				}
+				
 				for (Attribute attr : currentlyNotSet) {
+					// Everything else, better to set "notPresent" than missing
 					outputInstance.setValue(attr, "notPresent");
 				}
 				
-				outputInstance.setValue(fullAttrMap.get("classificationSubValue"), sm.get(pt.get(i)));
+				// Set the class attribute
 				outputInstance.setValue(sentimentClassAttr, a.toNominalSentiment());
 				
+				// Add to dataset
 				toExport.add(outputInstance);
 			}
 		}
+		
+		return toExport;
+	}
+	
+
+	public static void main(String[] args) throws Exception {
+
+		WordSentimentApp wa = new WordSentimentApp();
+		wa.readTweets();
+		wa.posTagTweets();
+		wa.updateSubjectivityMap();
+		wa.createAttr();
+		
+		Instances toExport = wa.createInstances();
 		
 		 BufferedWriter writer = new BufferedWriter(new FileWriter("sentiment.arff"));
 		 writer.write(toExport.toString());
