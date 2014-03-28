@@ -61,7 +61,7 @@ public abstract class SentimentApp {
 	}
 	
 	/**
-	 * Creates a SentimentApp with a custom tweet path, but the 
+	 * Creates a SentimentApp with a custom tweet set but the 
 	 * standard Gimpel POS tag path.
 	 * @param tweets
 	 * @throws IOException
