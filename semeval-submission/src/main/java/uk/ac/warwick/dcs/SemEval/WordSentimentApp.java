@@ -23,6 +23,7 @@ public class WordSentimentApp {
 		s = s.toLowerCase();
 		s = stemmer.stem(s);
 		s = s.replaceAll("[^a-z]", "");
+		s = s.trim();
 		return s;
 	}
 
@@ -52,11 +53,10 @@ public class WordSentimentApp {
 		for (POSTaggedTweet t : taggedTweets) {
 			sm.updateFromTweet(t);
 			for (POSToken pt : t.getPOSTokens()) {
-				if (pt.tag.equals("R")) {
-					modifierWords.add(processWord(pt.token));
-				}
-				if (pt.getAnnotation().isSubjective()) {
-					modifierWords.add(processWord(pt.token));
+				if (pt.tag.equals("R") || pt.getAnnotation().isSubjective()) {
+					String stemmed = processWord(pt.token);
+					if (stemmed.length() == 0) continue;
+					modifierWords.add(stemmed);
 				}
 			}
 		}
@@ -102,7 +102,9 @@ public class WordSentimentApp {
 				for (int j = 0; j < pt.size(); j++) {
 					POSToken p = pt.get(j);
 					if (!p.tag.equals("R") && !p.getAnnotation().isSubjective()) continue;
-					Attribute toSet = attrMap.get(processWord(p.token));
+					String s = processWord(p.token);
+					if (s.length() == 0) continue;
+					Attribute toSet = attrMap.get(s);
 					if (i < j) {
 						outputInstance.setValue(toSet, "after");
 					}
