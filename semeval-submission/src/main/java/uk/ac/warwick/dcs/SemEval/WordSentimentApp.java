@@ -5,11 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
@@ -29,6 +31,10 @@ public class WordSentimentApp extends SentimentApp {
 	public WordSentimentApp(List<Tweet> tweets) throws IOException {
 		super(tweets);
 	}
+	
+	public WordSentimentApp(ITweetReader r) throws IOException {
+		super(r);
+	}
 
 	public static String processWord(String s) {
 		PorterStemmer stemmer = new PorterStemmer();
@@ -39,57 +45,62 @@ public class WordSentimentApp extends SentimentApp {
 		return s;
 	}
 	
-	public void createAttr() {
-		this.modifierWords = new HashSet<String>();
-		this.attrMap       = new HashMap<String, Attribute>();
-		for (POSTaggedTweet t : this.taggedTweets) {
-			for (POSToken pt : t.getPOSTokens()) {
-				if (pt.tag.equals("R") || pt.getAnnotation().isSubjective()) {
-					String stemmed = processWord(pt.token);
-					if (stemmed.length() == 0) continue;
-					modifierWords.add(stemmed);
-				}
-			}
-		}
+	private Map<String, Attribute> getAttributes(Set<String> modifierWords) {
 		
-		// Construct instances
+		Map<String, Attribute> attributeMap = new TreeMap<String, Attribute>();
 		List<String> nominalVals = new ArrayList<String>();
 		nominalVals.add("before");
 		nominalVals.add("after");
 		nominalVals.add("notPresent");
 		nominalVals.add("present");
 		
-		this.attrMap = new HashMap<String, Attribute>();
-		for (String modifierWord : modifierWords) {
+		for (String modifierWord : new TreeSet<String>(modifierWords)) {
 			Attribute at = new Attribute(modifierWord, nominalVals);
-			this.attrMap.put(modifierWord, at);
+			attributeMap.put(modifierWord, at);
 		}
+		
+		return attributeMap;
 	}
 	
-	protected Map<String, Attribute> getAttributeMap() {
-		return this.attrMap;
-	}
-	
-	public void setAttributeMap(Map<String, Attribute> attrMap) {
-		this.attrMap = attrMap;
-	}
-	
-	private ArrayList<Attribute> getAttributes() {
-		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
-		for (Map.Entry<String, Attribute> e : this.attrMap.entrySet()) {
-			attrs.add(e.getValue());
+	public Set<String> generateModifierWords() {
+		Set<String> ret = new HashSet<String>();
+		for (POSTaggedTweet t : this.taggedTweets) {
+			for (POSToken pt : t.getPOSTokens()) {
+				if (pt.tag.equals("R") || pt.getAnnotation().isSubjective()) {
+					String stemmed = processWord(pt.token);
+					if (stemmed.length() == 0) continue;
+					ret.add(stemmed);
+				}
+			}
 		}
-		return attrs;
+		return ret;
+	}
+	
+	private Map<String, Attribute> getAttributes() {
+		return this.getAttributes(this.generateModifierWords());
 	}
 	
 	public Instances createInstances() {
-		
 		return this.createInstances(this.taggedTweets);
 	}
 	
-	public Instances createInstances(List<POSTaggedTweet> taggedTweets) {
+	public Instances createInstances(List<POSTaggedTweet> taggedTweets) { 
+		return this.createInstances(taggedTweets, this.generateModifierWords());
+	}
+	
+	public Instances createInstances(Set<String> modifierWords) {
+		return this.createInstances(this.taggedTweets, modifierWords);
+	}
+	
+	public Instances createInstances(List<POSTaggedTweet> taggedTweets, Set<String> modifierWords) {
 		
-		ArrayList<Attribute> attrs = this.getAttributes();
+		Map<String, Attribute> attributeMap = this.getAttributes(modifierWords);
+		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
+		for (Entry<String, Attribute> e : attributeMap.entrySet()) {
+			attrs.add(e.getValue());
+		}
+		
+		// Need to remove dependence on *this* 
 		
 		Attribute sentimentClassAttr = new Attribute(
 				"sentimentClass", AnnotationType.getNominalList()
@@ -100,8 +111,17 @@ public class WordSentimentApp extends SentimentApp {
 		Instances toExport = new Instances("sentiment", attrs, 0);
 		toExport.setClass(sentimentClassAttr);
 		
+		int progressCounter = 0;
+		
 		for (POSTaggedTweet t : taggedTweets) {
 			List<POSToken> pt = t.getPOSTokens();
+			progressCounter++;
+			if (progressCounter % 100 == 1 || progressCounter == taggedTweets.size()) {
+				System.err.printf("Creating instances (%d attribute(s), %d/%d complete, %.4f)\r", 
+						attrs.size(), progressCounter, taggedTweets.size(), 
+						progressCounter * 100.0 / taggedTweets.size()
+				);
+			}
 			for (int i = 0; i < pt.size(); i++) {
 				
 				// Don't bother exporting objective stuff
@@ -115,7 +135,7 @@ public class WordSentimentApp extends SentimentApp {
 				outputInstance.setDataset(toExport);
 				
 				// This keeps track of what's not in this tweet
-				Set<Attribute> currentlyNotSet = new HashSet<Attribute>(attrMap.values());
+				Set<Attribute> currentlyNotSet = new HashSet<Attribute>(attributeMap.values());
 				
 				for (int j = 0; j < pt.size(); j++) {
 					POSToken p = pt.get(j);
@@ -127,7 +147,7 @@ public class WordSentimentApp extends SentimentApp {
 					if (s.length() == 0) continue;
 					
 					// Set the column
-					Attribute toSet = this.attrMap.get(s);
+					Attribute toSet = attributeMap.get(s);
 					if (toSet == null) {
 						System.err.printf("WARNING: can't find '%s' attribute\n", s);
 						continue;
@@ -159,29 +179,8 @@ public class WordSentimentApp extends SentimentApp {
 				toExport.add(outputInstance);
 			}
 		}
-		
+		System.err.println();
 		return toExport;
-	}
-	
-
-	public static void main(String[] args) throws Exception {
-
-		WordSentimentApp wa = new WordSentimentApp();
-		wa.readTweets();
-		wa.posTagTweets();
-		wa.updateSubjectivityMap();
-		wa.createAttr();
-		
-		wa.selfEvaluate();
-    	wa.crossValidate();
-    	wa.crossValidateSentences();	
-		
-		Instances toExport = wa.createInstances();
-		
-		BufferedWriter writer = new BufferedWriter(new FileWriter("sentiment.arff"));
-		writer.write(toExport.toString());
-		writer.flush();
-		writer.close();
 	}
 
 	@Override
@@ -195,6 +194,11 @@ public class WordSentimentApp extends SentimentApp {
 		AbstractClassifier clf = this.getUntrainedClassifier();
 		clf.buildClassifier(instances);
 		return clf;
+	}
+	
+	public void evaluateOn(AbstractClassifier clf, Set<String> modifierWords) throws Exception {
+		Instances setInstances = this.createInstances(modifierWords);
+		super.evaluateOn(clf, setInstances);
 	}
 
 	protected void crossValidateSentence(int fold, List<POSTaggedTweet> learningTweets) throws Exception {
@@ -229,6 +233,25 @@ public class WordSentimentApp extends SentimentApp {
 		for (int fold = 0; fold < 10; fold++) {
 			this.crossValidateSentence(fold, this.taggedTweets);
 		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+
+		WordSentimentApp wa = new WordSentimentApp();
+		wa.readTweets();
+		wa.posTagTweets();
+		wa.updateSubjectivityMap();
+		
+		wa.selfEvaluate();
+    	wa.crossValidate();
+    	wa.crossValidateSentences();	
+		
+		Instances toExport = wa.createInstances();
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter("sentiment.arff"));
+		writer.write(toExport.toString());
+		writer.flush();
+		writer.close();
 	}
 
 }

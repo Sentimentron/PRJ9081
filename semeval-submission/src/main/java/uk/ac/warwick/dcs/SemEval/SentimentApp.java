@@ -27,8 +27,7 @@ public abstract class SentimentApp {
 	protected RawTagger posTagger;
 	protected List<Tweet> tweets;
 	protected List<POSTaggedTweet> taggedTweets;
-	protected Set<String> modifierWords;
-	protected Map<String, Attribute> attrMap;
+
 	protected long timeCreated;
 	
 	public SubjectivityMap getSubjectivityMap() {

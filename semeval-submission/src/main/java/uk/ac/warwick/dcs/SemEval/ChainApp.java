@@ -11,18 +11,36 @@ public class ChainApp {
 
 	public static void main(String[] args) throws Exception {
 
-		SubjectivityApp oracle = new SubjectivityApp();
-		oracle.readTweets();
-		oracle.posTagTweets();
-    	oracle.updateSubjectivityMap();
-    	
-    	AbstractClassifier clf = oracle.buildClassifier();	
-		SubjectivityApp stooge  = new SubjectivityApp();
-		stooge.readTweets();
-		stooge.posTagTweets();
-		stooge.applyPredictions(clf, oracle.getSubjectivityMap());
+		SubjectivityApp subjectivitySource = new SubjectivityApp(new NebraskaReader("amt.sqlite"));
+		subjectivitySource.readTweets();
+		subjectivitySource.posTagTweets();
+		subjectivitySource.updateSubjectivityMap();
+		AbstractClassifier clfSubjective = subjectivitySource.buildClassifier();
 		
-		WordSentimentApp wa = new WordSentimentApp(stooge.getTweets());
+		SubjectivityApp subjectivityTarget = new SubjectivityApp(new SemEvalTaskAReader("twitter-test-gold-A.tsv"));
+		subjectivityTarget.readTweets();
+		subjectivityTarget.posTagTweets();
+		subjectivityTarget.updateSubjectivityMap();
+		subjectivityTarget.applyPredictions(clfSubjective, subjectivitySource.getSubjectivityMap());
+		
+		WordSentimentApp wordAnnotationSource = new WordSentimentApp(new NebraskaReader("amt.sqlite"));
+		wordAnnotationSource.readTweets();
+		wordAnnotationSource.posTagTweets();
+		wordAnnotationSource.updateSubjectivityMap();
+		AbstractClassifier clfWords = wordAnnotationSource.buildClassifier();
+		
+		WordSentimentApp wordAnnotationTarget = new WordSentimentApp(new SemEvalTaskAReader("twitter-test-gold-A.tsv"));
+		wordAnnotationTarget.readTweets();
+		wordAnnotationTarget.posTagTweets();
+		wordAnnotationTarget.evaluateOn(clfWords, wordAnnotationSource.generateModifierWords());
+		/*
+		wordAnnotationTarget.applyPredictions(clfWords, wordAnnotationSource.getSubjectiveTokens());
+		
+		SemEvalTaskAWriter sw = new SemEvalTaskAWriter("amt-on-gold.pred");
+		for (Tweet t : wordAnnotationTarget )
+		
+		
+		WordSentimentApp wa = new WordSentimentApp(subjectivityTarget.getTweets());
 		wa.posTagTweets();
 		wa.createAttr();
 		
@@ -35,7 +53,7 @@ public class ChainApp {
 		BufferedWriter writer = new BufferedWriter(new FileWriter("sentimentWithDerivedSubjectivity.arff"));
 		writer.write(toExport.toString());
 		writer.flush();
-		writer.close();
+		writer.close();*/
 	}
 
 }

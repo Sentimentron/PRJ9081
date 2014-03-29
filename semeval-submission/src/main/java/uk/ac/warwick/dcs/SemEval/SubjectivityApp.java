@@ -185,72 +185,18 @@ public class SubjectivityApp extends SentimentApp {
     
     public static void main( String[] args ) throws Exception
     {		
-		SubjectivityApp sa = new SubjectivityApp();
+		SubjectivityApp sa = new SubjectivityApp(new NebraskaReader("amt.sqlite"));
 		sa.readTweets();
 		sa.posTagTweets();
 		sa.updateSubjectivityMap();
-		System.out.println("Training tweeter-dev-full-A-tweets.tsv on tweeter-dev-full-A-tweets.tsv...");
-		System.out.println("Using default SubjectivityMap...");
-		//sa.selfEvaluate();
-		//sa.crossValidate();
-		sa.crossValidateSentences();
 		
-		/*sa.setSubjectivityMap(new RegexpSubjectivityMap());
-		sa.updateSubjectivityMap();
-		sa.crossValidateSentences();*/
+		AbstractClassifier clf = sa.buildClassifier();
 		
-		for (int alpha = 5; alpha <= 15; alpha++) {
-			for (int beta = 5; beta <= 15; beta++) {
-				sa.setSubjectivityMap(new BetaEstimatingSubjectivityMap(alpha, beta));
-				sa.updateSubjectivityMap();
-				System.out.println("Using BetaEstimatingSubjectivityMap...");
-				System.out.printf("alpha = %d\tbeta = %d\n", alpha, beta);
-				sa.crossValidateSentences();
-			}
-		}
-		
-		/*sa.setSubjectivityMap(new LowerCaseSubjectivityMap());
-		sa.updateSubjectivityMap();
-		System.out.println("Using LowerCaseSubjectivityMap...");
-		sa.crossValidateSentences();
-		
-		sa.setSubjectivityMap(new PosTaggedSubjectivityMap());
-		sa.updateSubjectivityMap();
-		System.out.println("Using PosTaggedSubjectivityMap...");
-		sa.crossValidateSentences();
-		
-		sa.setSubjectivityMap(new StemmingSubjectivityMap());
-		sa.updateSubjectivityMap();
-		System.out.println("Using StemmingSubjectivityMap...");
-		sa.crossValidateSentences();*/
-		
-		
-		/*for (int alpha = 2; alpha <= 3; alpha++) {
-			for(int beta = 1; beta <= 5; beta++) {
-				sa.setSubjectivityMap(new BetaEstimatingSubjectivityMap(alpha, beta));
-				sa.updateSubjectivityMap();
-				System.out.println("Using BetaEstimatingSubjectivityMap...");
-				System.out.printf("alpha = %d\tbeta = %d\n", alpha, beta);
-				sa.crossValidateSentences();
-			}
-		}*/
-		
-		
-
-		/*SubjectivityApp trainer = new SubjectivityApp(new SemEvalTaskAReader(
-				"twitter-test-gold-A.tsv"));
-
-		trainer.readTweets();
-		trainer.posTagTweets();
-		trainer.updateSubjectivityMap();
-
-		System.out.println("Training twitter-test-gold-A.tsv on tweeter-dev-full-A-tweets.tsv...");
-		AbstractClassifier clf = trainer.buildClassifier();
-		sa.evaluateOn(clf);
-
-		System.out.println("Training tweeter-dev-full-A-tweets.tsv on twitter-test-gold-A.tsv...");
-		clf = sa.buildClassifier();
-		trainer.evaluateOn(clf);*/
+		SubjectivityApp target = new SubjectivityApp(new SemEvalTaskAReader("twitter-test-gold-A.tsv"));
+		target.readTweets();
+		target.posTagTweets();
+		target.updateSubjectivityMap();
+		target.evaluateOn(clf);
 
     }
 }
