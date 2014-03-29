@@ -13,12 +13,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import edu.stanford.nlp.util.Pair;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.FastVector;
+import weka.core.Instance;
 import weka.core.Instances;
 
 public class WordSentimentApp extends SentimentApp {
@@ -92,94 +94,141 @@ public class WordSentimentApp extends SentimentApp {
 		return this.createInstances(this.taggedTweets, modifierWords);
 	}
 	
-	public Instances createInstances(List<POSTaggedTweet> taggedTweets, Set<String> modifierWords) {
+	private List<Pair<Integer, Instance>> generatePosTaggedSentenceInstances(
+			POSTaggedTweet t, Set<String> modifierWords,
+			Map<String, Attribute> attributeMap,
+			Attribute sentimentClassAttr,
+			Instance template, Instances dataSet) {
 		
-		Map<String, Attribute> attributeMap = this.getAttributes(modifierWords);
-		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
-		for (Entry<String, Attribute> e : attributeMap.entrySet()) {
-			attrs.add(e.getValue());
+		List<Pair<Integer, Instance>> toExport = new ArrayList<Pair<Integer,Instance>>();
+		List<POSToken> pt = t.getPOSTokens();
+		
+		for (int i = 0; i < pt.size(); i++) {
+			// Don't bother exporting objective stuff
+			AnnotationType a = t.annotations.get(i);
+			if (a == null) continue;
+			if (!a.isSubjective()) continue;
+			
+			// Create an instance which represents the context 
+			// of a given annotation
+			DenseInstance outputInstance = new DenseInstance(template);
+			outputInstance.setDataset(dataSet);
+			
+			// This keeps track of what's not in this tweet
+			Set<Attribute> currentlyNotSet = new HashSet<Attribute>(attributeMap.values());
+			
+			for (int j = 0; j < pt.size(); j++) {
+				POSToken p = pt.get(j);
+				// Ignore if not an adverb or anything subjective
+				if (!p.tag.equals("R") && !p.getAnnotation().isSubjective()) continue;
+				
+				// If the word is blank, don't process
+				String s = processWord(p.token);
+				if (s.length() == 0) continue;
+				
+				// Set the column
+				Attribute toSet = attributeMap.get(s);
+				if (toSet == null) {
+					System.err.printf("WARNING: can't find '%s' attribute\n", s);
+					continue;
+				}
+				
+				if (i < j) {
+					outputInstance.setValue(toSet, "after");
+				}
+				else if (i == j) {
+					outputInstance.setValue(toSet, "present");
+				}
+				else {
+					outputInstance.setValue(toSet, "before");
+				}
+				
+				// Don't need to mark this as not present
+				currentlyNotSet.remove(toSet);
+			}
+			
+			for (Attribute attr : currentlyNotSet) {
+				// Everything else, better to set "notPresent" than missing
+				outputInstance.setValue(attr, "notPresent");
+			}
+			
+			// Set the class attribute
+			outputInstance.setValue(sentimentClassAttr, a.toNominalSentiment());
+			
+			// Add to return structure
+			toExport.add(new Pair<Integer, Instance>(pt.get(i).endCharOffset, outputInstance));
 		}
 		
-		// Need to remove dependence on *this* 
-		
-		Attribute sentimentClassAttr = new Attribute(
-				"sentimentClass", AnnotationType.getNominalList()
-				);
-		
-		attrs.add(sentimentClassAttr);
-		
-		Instances toExport = new Instances("sentiment", attrs, 0);
-		toExport.setClass(sentimentClassAttr);
-		
+		return toExport;
+	}
+	
+	private List<Pair<Integer, Instance>> generateOffsetInstances(
+			List<POSTaggedTweet> taggedTweets, Set<String> modifierWords,
+			Instance template, Instances dataSet, Map<String, Attribute>attributeMap, 
+			ArrayList<Attribute> attrs, Attribute sentimentClassAttr 
+			) {
+				
+		List<Pair<Integer, Instance>> toExport = new ArrayList<Pair<Integer, Instance>>();		
 		int progressCounter = 0;
 		
 		for (POSTaggedTweet t : taggedTweets) {
-			List<POSToken> pt = t.getPOSTokens();
+			
+			for (Pair<Integer, Instance> pair : 
+				this.generatePosTaggedSentenceInstances(
+						t, modifierWords, attributeMap, sentimentClassAttr, 
+						template, dataSet 
+						)) {
+				toExport.add(pair);
+			}
 			progressCounter++;
 			if (progressCounter % 100 == 1 || progressCounter == taggedTweets.size()) {
 				System.err.printf("Creating instances (%d attribute(s), %d/%d complete, %.4f)\r", 
 						attrs.size(), progressCounter, taggedTweets.size(), 
 						progressCounter * 100.0 / taggedTweets.size()
 				);
-			}
-			for (int i = 0; i < pt.size(); i++) {
-				
-				// Don't bother exporting objective stuff
-				AnnotationType a = t.annotations.get(i);
-				if (a == null) continue;
-				if (!a.isSubjective()) continue;
-				
-				// Create an instance which represents the context 
-				// of a given annotation
-				DenseInstance outputInstance = new DenseInstance(attrs.size());
-				outputInstance.setDataset(toExport);
-				
-				// This keeps track of what's not in this tweet
-				Set<Attribute> currentlyNotSet = new HashSet<Attribute>(attributeMap.values());
-				
-				for (int j = 0; j < pt.size(); j++) {
-					POSToken p = pt.get(j);
-					// Ignore if not an adverb or anything subjective
-					if (!p.tag.equals("R") && !p.getAnnotation().isSubjective()) continue;
-					
-					// If the word is blank, don't process
-					String s = processWord(p.token);
-					if (s.length() == 0) continue;
-					
-					// Set the column
-					Attribute toSet = attributeMap.get(s);
-					if (toSet == null) {
-						System.err.printf("WARNING: can't find '%s' attribute\n", s);
-						continue;
-					}
-					
-					if (i < j) {
-						outputInstance.setValue(toSet, "after");
-					}
-					else if (i == j) {
-						outputInstance.setValue(toSet, "present");
-					}
-					else {
-						outputInstance.setValue(toSet, "before");
-					}
-					
-					// Don't need to mark this as not present
-					currentlyNotSet.remove(toSet);
-				}
-				
-				for (Attribute attr : currentlyNotSet) {
-					// Everything else, better to set "notPresent" than missing
-					outputInstance.setValue(attr, "notPresent");
-				}
-				
-				// Set the class attribute
-				outputInstance.setValue(sentimentClassAttr, a.toNominalSentiment());
-				
-				// Add to dataset
-				toExport.add(outputInstance);
-			}
+			}				
 		}
 		System.err.println();
+		return toExport;
+	}
+	
+	private ArrayList<Attribute> getAttributeList(Map<String, Attribute> attributeMap,
+			Attribute sentimentClassAttr) {
+		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
+		for (Entry<String, Attribute> e : attributeMap.entrySet()) {
+			attrs.add(e.getValue());
+		}
+		attrs.add(sentimentClassAttr);
+		return attrs;
+	}
+	
+	public Instances createInstances(List<POSTaggedTweet> taggedTweets, Set<String> modifierWords) {
+		
+		Map<String, Attribute> attributeMap = this.getAttributes(modifierWords);
+		
+		
+		Attribute sentimentClassAttr = new Attribute(
+				"sentimentClass", AnnotationType.getNominalList()
+				);
+		
+		ArrayList<Attribute> attrs = this.getAttributeList(attributeMap, sentimentClassAttr);
+		
+		Instance template = new DenseInstance(attrs.size());
+		Instances toExport = new Instances("sentiment", attrs, 0);
+		toExport.setClass(sentimentClassAttr);
+		template.setDataset(toExport);
+		
+		for (Pair<Integer, Instance> pairedInstance : 
+			this.generateOffsetInstances(taggedTweets, modifierWords, 
+					template, toExport, 
+					attributeMap, attrs, 
+					sentimentClassAttr)
+				) {
+			Instance outputInstance = pairedInstance.second;
+			outputInstance.setDataset(toExport);
+			toExport.add(outputInstance);
+		}
+		
 		return toExport;
 	}
 
@@ -252,6 +301,42 @@ public class WordSentimentApp extends SentimentApp {
 		writer.write(toExport.toString());
 		writer.flush();
 		writer.close();
+	}
+
+	public void applyPredictions(AbstractClassifier clfWords,
+			Set<String> modifierWords) throws Exception {
+		
+		Map<String, Attribute> attributeMap = this.getAttributes();
+		Attribute sentimentClassAttr = new Attribute(
+				"sentimentClass", AnnotationType.getNominalList()
+				);
+		
+		ArrayList<Attribute> attributeList = this.getAttributeList(attributeMap, sentimentClassAttr);
+		
+		Instances dummyInstances = new Instances(null, null, 0);
+		Instance templateInstance = new DenseInstance(attributeList.size());
+		
+		for (POSTaggedTweet pt : this.taggedTweets) {
+			
+			List<Pair<Integer, Instance>> instancePairs = 
+					this.generatePosTaggedSentenceInstances(
+							pt, modifierWords, 
+							attributeMap, sentimentClassAttr,
+							templateInstance, dummyInstances
+						);
+			
+			for (Pair<Integer, Instance> dat : instancePairs) {
+				double prediction = clfWords.classifyInstance(dat.second);
+				String predictionStr = sentimentClassAttr.value((int) prediction);
+    			AnnotationType a = new AnnotationType(predictionStr);
+    			pt.applyDerivedAnnotation(dat.first, a);
+			}
+		}
+		
+		this.tweets.clear();
+		for (POSTaggedTweet p : this.taggedTweets) {
+    		this.tweets.add(p.getParent());
+    	}
 	}
 
 }
