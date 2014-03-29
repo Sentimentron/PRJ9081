@@ -131,7 +131,7 @@ public class SubjectivityApp extends SentimentApp {
 		
 		Evaluation foldElv = new Evaluation(testingInstances);
 		foldElv.evaluateModel(clfSent, testingInstances);
-		System.out.printf("FOLD %d\n", fold);
+		System.out.printf("FOLD %d\n", fold+1);
 		SentimentApp.printEvaluationSummary(foldElv);
     }
     
