@@ -10,8 +10,8 @@ public class BenchmarkApp {
 	public static void main(String[] args) throws Exception {
 
 		SemEvalTaskAWriter testWriter = new SemEvalTaskAWriter("output.pred");
-		SemEvalTaskATestReader testReader = new SemEvalTaskATestReader("tweeter-dev-full-A-tweets-sample.tsv");				//new SemEvalTaskATestReader("twitter-test-gold-A.tsv");
-		ITweetReader trainSrc = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");	//new NebraskaReader("amt.sqlite");
+		SemEvalTaskATestReader testReader = new SemEvalTaskATestReader("twitter-test-gold-A.tsv");
+		ITweetReader trainSrc = new NebraskaReader("amt.sqlite");
 		
 		SubjectivityApp subjectivitySource = new SubjectivityApp(trainSrc);
 		subjectivitySource.readTweets();
