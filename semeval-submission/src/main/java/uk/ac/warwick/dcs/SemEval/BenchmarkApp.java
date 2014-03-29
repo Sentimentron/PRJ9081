@@ -31,8 +31,7 @@ public class BenchmarkApp {
 		wordAnnotationSource.updateSubjectivityMap();
 		AbstractClassifier clfWords = wordAnnotationSource.buildClassifier();
 		
-		WordSentimentApp wordAnnotationTarget = new WordSentimentApp(testReader);
-		wordAnnotationTarget.readTweets();
+		WordSentimentApp wordAnnotationTarget = new WordSentimentApp(subjectivityTarget.getTweets());
 		wordAnnotationTarget.posTagTweets();
 		wordAnnotationTarget.applyPredictions(clfWords, wordAnnotationSource.generateModifierWords());
 		

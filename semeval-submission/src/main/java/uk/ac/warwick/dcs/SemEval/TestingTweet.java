@@ -15,9 +15,9 @@ public class TestingTweet extends Tweet {
 		this.interestingSections = new ArrayList<Pair<Integer, Integer>>();
 	}
 	
-	public TestingTweet(String text, int id2,
+	public TestingTweet(String text, long id1, int id2,
 			List<Pair<Integer, Integer>> interestingSections) {
-		this(text, 0, id2);
+		this(text, id1, id2);
 		for (Pair<Integer, Integer> section: interestingSections) {
 			this.addInterestingSection(section.first, section.second);
 		}

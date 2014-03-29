@@ -52,7 +52,7 @@ public class POSTaggedTweet extends Tweet {
 		
 		if (t instanceof TestingTweet) {
 			TestingTweet tw = (TestingTweet) t;
-			this.parent = new TestingTweet(t.getText(), t.getId2(), tw.getInterestingSections()); 
+			this.parent = new TestingTweet(t.getText(), t.getId1(), t.getId2(), tw.getInterestingSections()); 
 		}
 		else {
 			this.parent = new Tweet(t.getText(), t.getAnnotations(), t.getId1(), t.getId2());

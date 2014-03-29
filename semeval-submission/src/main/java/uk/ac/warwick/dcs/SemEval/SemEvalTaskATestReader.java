@@ -28,19 +28,24 @@ public class SemEvalTaskATestReader implements ITweetReader {
 		
 		while ((line = br.readLine()) != null) {
 			String[] fields = line.split("\t");
-			// First identifier is missing in test data
-			int identifier = Integer.parseInt(fields[1]);
+			// First identifier is missing in test data in 2014
+			String identifier1Str = fields[0];
+			long identifier1 = 0;
+			if (!identifier1Str.equals("NA")) {
+				identifier1 = Long.parseLong(identifier1Str);
+			}
+			int identifier2 = Integer.parseInt(fields[1]);
 			int start = Integer.parseInt(fields[2]);
 			int end   = Integer.parseInt(fields[3]);
 			String text = fields[5];
 			
 			TestingTweet out;
-			if (ret.containsKey(identifier)) {
-				out = ret.get(identifier);
+			if (ret.containsKey(identifier2)) {
+				out = ret.get(identifier2);
 			}
 			else {
-				out = new TestingTweet(text, 0, identifier);
-				ret.put(identifier, out);
+				out = new TestingTweet(text, identifier1, identifier2);
+				ret.put(identifier2, out);
 			}
 			
 			out.addInterestingSection(start, end);

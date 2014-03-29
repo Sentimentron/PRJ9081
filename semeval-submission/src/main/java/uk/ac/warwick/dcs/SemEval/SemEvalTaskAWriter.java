@@ -46,7 +46,12 @@ public class SemEvalTaskAWriter {
 	}
 	
 	public void writeTweet(Tweet t, int offsetStart, int offsetEnd) throws IOException {
-		this.bw.write(Long.toString(t.getId1()));
+		if (t.getId1() == 0) {
+			this.bw.write("NA");
+		}
+		else {
+			this.bw.write(Long.toString(t.getId1()));
+		}
 		this.bw.write('\t');
 		this.bw.write(Integer.toString(t.getId2()));
 		this.bw.write('\t');
