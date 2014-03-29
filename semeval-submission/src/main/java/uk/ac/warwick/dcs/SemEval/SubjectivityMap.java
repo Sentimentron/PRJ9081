@@ -37,6 +37,7 @@ public class SubjectivityMap {
 
 	public void put(POSToken keyObj) {
 		String key = this.getMapRepresentation(keyObj);
+		if (key == null) return;
 		this.freq_map.put(key);
 		if (keyObj.getAnnotation().isSubjective()) {
 			this.subj_map.put(key);
