@@ -70,7 +70,7 @@ public class POSTaggedTweet extends Tweet {
 			for (int i = 1; i <= groupCount; i++) {
 				startCharOffset += leftMatcher.group(i).length();
 				if (i == 2) {
-					this.annotations.insertSlice(startCharOffset);
+					this.annotations.insertSlice(this.origWm.getWordEndOffset(startCharOffset));
 					this.insertedOffsets.add(startCharOffset);
 				}
 			}
@@ -80,15 +80,17 @@ public class POSTaggedTweet extends Tweet {
 		leftMatcher = RawTwokenize.getLeftEdgePunctMatcher(rawText);
 		textAfterLeftFiltering = leftMatcher.replaceAll("$1$2 $3");
 		
-		Matcher rightMatcher = RawTwokenize.getLeftEdgePunctMatcher(textAfterLeftFiltering);
+		WordRangeMap revisedWordMap = new WordRangeMap(textAfterLeftFiltering);
+		
+		Matcher rightMatcher = RawTwokenize.getRightEdgePunctMatcher(textAfterLeftFiltering);
 		while(rightMatcher.find()) {
-			int startCharOffset = leftMatcher.start();
-			int groupCount      = leftMatcher.groupCount();
+			int startCharOffset = rightMatcher.start();
+			int groupCount      = rightMatcher.groupCount();
 			if (groupCount != 3) continue;
 			for (int i = 1; i <= groupCount; i++) {
-				startCharOffset += leftMatcher.group(i).length();
+				startCharOffset += rightMatcher.group(i).length();
 				if (i == 1) {
-					this.annotations.insertSlice(startCharOffset);
+					this.annotations.insertSlice(revisedWordMap.getWordEndOffset(startCharOffset));
 					this.insertedOffsets.add(startCharOffset);
 				}
 			}
