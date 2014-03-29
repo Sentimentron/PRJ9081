@@ -27,7 +27,7 @@ public class POSTaggedTweetTest {
 	@Test
 	// Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC ( BCS ) Wednesday continued to reap the rewards... http://bit.ly/W5t0au
 	public void testConstructionAndPOSTagging1() throws Exception {
-		Tweet t = new Tweet("Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC (BCS) Wednesday continued to reap the rewards... http://bit.ly/W5t0au ");
+		Tweet t = new Tweet("Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC (BCS) Wednesday continued to reap the rewards... http://bit.ly/W5t0au ", 0, 0);
 		t.addAnnotation(new AnnotationSpan(AnnotationKind.Positive, 10, 14));
 		// Positive span should extend to word offset 16 after pos tagging
 		POSTaggedTweet pt = new POSTaggedTweet(t, this.tagger);
@@ -44,7 +44,7 @@ public class POSTaggedTweetTest {
 	// || |  | | | |     | |     | | | || |   || | | |||  | |  | |     | |  | | | |    |   |  ||   | |    | |           ||                  |
 	@Test
 	public void testConstructionAndPosTagging2() throws Exception {
-		Tweet t = new Tweet("In case you weren't invited . . .: ..it 'may' have been because Andy was hiding a deep,dark secret Personali... http://bit.ly/WdxawR ");
+		Tweet t = new Tweet("In case you weren't invited . . .: ..it 'may' have been because Andy was hiding a deep,dark secret Personali... http://bit.ly/WdxawR ", 0, 0);
 		t.addAnnotation(new AnnotationSpan(AnnotationKind.Negative, 3, 4));
 		t.addAnnotation(new AnnotationSpan(AnnotationKind.Negative, 17, 20));
 		POSTaggedTweet pt = new POSTaggedTweet(t, this.tagger);

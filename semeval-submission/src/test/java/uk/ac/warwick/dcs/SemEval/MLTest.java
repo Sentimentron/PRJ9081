@@ -37,11 +37,11 @@ public class MLTest {
 
 	@Test
 	public void testMatchingUp() throws Exception {
-		Tweet t1 = new Tweet("In case you weren't invited . . .: ..it 'may' have been because Andy was hiding a deep,dark secret Personali... http://bit.ly/WdxawR ");
+		Tweet t1 = new Tweet("In case you weren't invited . . .: ..it 'may' have been because Andy was hiding a deep,dark secret Personali... http://bit.ly/WdxawR ", 0, 0);
 		t1.addAnnotation(new AnnotationSpan(AnnotationKind.Negative, 3, 4));
 		t1.addAnnotation(new AnnotationSpan(AnnotationKind.Negative, 17, 20));
 
-		Tweet t2 = new Tweet("Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC (BCS) Wednesday continued to reap the rewards... http://bit.ly/W5t0au ");
+		Tweet t2 = new Tweet("Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC (BCS) Wednesday continued to reap the rewards... http://bit.ly/W5t0au ", 0, 0);
 		t2.addAnnotation(new AnnotationSpan(AnnotationKind.Positive, 10, 14));
 
 		POSTaggedTweet p1 = new POSTaggedTweet(t1, this.tagger);
@@ -107,11 +107,11 @@ public class MLTest {
 	@Test
 	public void testML() throws Exception {
 		
-		Tweet t1 = new Tweet("In case you weren't invited . . .: ..it 'may' have been because Andy was hiding a deep,dark secret Personali... http://bit.ly/WdxawR ");
+		Tweet t1 = new Tweet("In case you weren't invited . . .: ..it 'may' have been because Andy was hiding a deep,dark secret Personali... http://bit.ly/WdxawR ", 0, 0);
 		t1.addAnnotation(new AnnotationSpan(AnnotationKind.Negative, 3, 4));
 		t1.addAnnotation(new AnnotationSpan(AnnotationKind.Negative, 17, 20));
 
-		Tweet t2 = new Tweet("Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC (BCS) Wednesday continued to reap the rewards... http://bit.ly/W5t0au ");
+		Tweet t2 = new Tweet("Barclays Profit Driven by Investment Banking: LONDON--Barclays PLC (BCS) Wednesday continued to reap the rewards... http://bit.ly/W5t0au ", 0, 0);
 		t2.addAnnotation(new AnnotationSpan(AnnotationKind.Positive, 10, 14));
 
 		POSTaggedTweet p1 = new POSTaggedTweet(t1, this.tagger);

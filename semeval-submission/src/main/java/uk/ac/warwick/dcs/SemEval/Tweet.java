@@ -8,8 +8,22 @@ public class Tweet {
 	protected String text;
 	private int maxLength;
 	
-	public Tweet(String text) {
+	private long id1;
+	private int id2;
+	
+	public long getId1() {
+		return this.id1;
+	}
+	
+	public int getId2() {
+		return this.id2;
+	}
+	
+	public Tweet(String text, long id1, int id2) {
 		String[] arr;
+		
+		this.id1 = id1;
+		this.id2 = id2;
 		
 		this.text = text;
 		arr = this.text.split("[ ,]"); //TODO should roll this into WordRangeMap
@@ -17,8 +31,8 @@ public class Tweet {
 		this.maxLength = arr.length;
 	}
 	
-	public Tweet(String text, AnnotationMap m) {
-		this(text);
+	public Tweet(String text, AnnotationMap m, long id1, int id2) {
+		this(text, id1, id2);
 		this.annotations = m;
 	}
 	

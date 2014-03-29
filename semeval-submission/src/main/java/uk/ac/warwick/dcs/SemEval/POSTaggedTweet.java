@@ -48,9 +48,9 @@ public class POSTaggedTweet extends Tweet {
 	}
 	
 	public POSTaggedTweet(Tweet t, RawTagger tagger) throws Exception {
-		super(t.getText(), t.getAnnotations());
+		super(t.getText(), t.getAnnotations(), t.getId1(), t.getId2());
 		
-		this.parent = new Tweet(t.getText(), t.getAnnotations());
+		this.parent = new Tweet(t.getText(), t.getAnnotations(), t.getId1(), t.getId2());
 		
 		String rawText = t.getText();
 		String textAfterLeftFiltering;

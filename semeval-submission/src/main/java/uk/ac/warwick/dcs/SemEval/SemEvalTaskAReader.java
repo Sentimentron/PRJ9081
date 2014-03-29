@@ -42,7 +42,7 @@ public class SemEvalTaskAReader {
 			   obj = ret.get(identity);
 		   }
 		   else {
-			   obj = new Tweet(tweet);
+			   obj = new Tweet(tweet, identifier1, identifier2);
 			   ret.put(identity, obj);
 		   }
 		   
