@@ -100,7 +100,7 @@ public class SubjectivityApp extends SentimentApp {
 		return learningTweets;
     }
     
-    protected void crossValidateSentences(int fold, List<MLSubjectiveTweet> learningTweets) 
+    protected double crossValidateSentences(int fold, List<MLSubjectiveTweet> learningTweets) 
     		throws Exception {
     	
 		Collections.shuffle(learningTweets, new Random(System.nanoTime()));
@@ -133,15 +133,26 @@ public class SubjectivityApp extends SentimentApp {
 		foldElv.evaluateModel(clfSent, testingInstances);
 		System.out.printf("FOLD %d\n", fold+1);
 		SentimentApp.printEvaluationSummary(foldElv);
+		return foldElv.fMeasure(0);
     }
     
     @Override
     protected void crossValidateSentences() throws Exception {
 		System.out.println("***CROSS VALIDATION (sentences, 10 folds)***");
 		List<MLSubjectiveTweet> learningTweets = this.getLearningTweets();
+		Collections.shuffle(learningTweets, new Random(this.timeCreated));
+		List<Double> fMeasures = new ArrayList<Double>();
     	for (int fold = 0; fold < 10; fold ++) {
-    		this.crossValidateSentences(fold, learningTweets);
+    		fMeasures.add(this.crossValidateSentences(fold, learningTweets));
     	}
+    	
+    	double averageFmeasureSum = 0;
+    	for (Double f : fMeasures) {
+    		averageFmeasureSum += f;
+    	}
+    	
+    	System.out.printf("Average fMeasure across all folds: %.4f\n", averageFmeasureSum / fMeasures.size());
+    	
     }
     
     protected void applyPredictions(AbstractClassifier clf, SubjectivityMap s) throws Exception {
