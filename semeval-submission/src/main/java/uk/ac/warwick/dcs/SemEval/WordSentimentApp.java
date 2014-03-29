@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import edu.stanford.nlp.util.Pair;
+import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.RandomForest;
@@ -104,10 +105,18 @@ public class WordSentimentApp extends SentimentApp {
 		List<POSToken> pt = t.getPOSTokens();
 		
 		for (int i = 0; i < pt.size(); i++) {
-			// Don't bother exporting objective stuff
-			AnnotationType a = t.annotations.get(i);
-			if (a == null) continue;
-			if (!a.isSubjective()) continue;
+			AnnotationType a;
+			if (t.getParent() instanceof TestingTweet) {
+				TestingTweet tw = (TestingTweet) t.getParent();
+				if (!tw.inInterestingSection(i)) continue;
+				a = new AnnotationType(AnnotationKind.Subjective);
+			}
+			else {
+				// Don't bother exporting objective stuff
+				a = t.annotations.get(i);
+				if (a == null) continue;
+				if (!a.isSubjective()) continue;
+			}
 			
 			// Create an instance which represents the context 
 			// of a given annotation
@@ -306,15 +315,16 @@ public class WordSentimentApp extends SentimentApp {
 	public void applyPredictions(AbstractClassifier clfWords,
 			Set<String> modifierWords) throws Exception {
 		
-		Map<String, Attribute> attributeMap = this.getAttributes();
+		Map<String, Attribute> attributeMap = this.getAttributes(modifierWords);
 		Attribute sentimentClassAttr = new Attribute(
 				"sentimentClass", AnnotationType.getNominalList()
 				);
 		
 		ArrayList<Attribute> attributeList = this.getAttributeList(attributeMap, sentimentClassAttr);
 		
-		Instances dummyInstances = new Instances(null, null, 0);
 		Instance templateInstance = new DenseInstance(attributeList.size());
+		Instances dummyInstances = new Instances("sentiment", attributeList, 0);
+		dummyInstances.setClass(sentimentClassAttr);
 		
 		for (POSTaggedTweet pt : this.taggedTweets) {
 			

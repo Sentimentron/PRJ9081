@@ -15,6 +15,14 @@ public class TestingTweet extends Tweet {
 		this.interestingSections = new ArrayList<Pair<Integer, Integer>>();
 	}
 	
+	public TestingTweet(String text, int id2,
+			List<Pair<Integer, Integer>> interestingSections) {
+		this(text, 0, id2);
+		for (Pair<Integer, Integer> section: interestingSections) {
+			this.addInterestingSection(section.first, section.second);
+		}
+	} 
+
 	public void addInterestingSection(int startOffset, int endOffset) {
 		this.interestingSections.add(
 				new Pair<Integer, Integer>(startOffset, endOffset)
@@ -23,6 +31,15 @@ public class TestingTweet extends Tweet {
 	
 	public List<Pair<Integer, Integer>> getInterestingSections() {
 		return this.interestingSections;
+	}
+	
+	public boolean inInterestingSection(int i) {
+		for (Pair<Integer, Integer> p : this.interestingSections) {
+			if (i < p.first) continue;
+			if (i > p.second) continue;
+			return true;
+		}
+		return false;
 	}
 
 }

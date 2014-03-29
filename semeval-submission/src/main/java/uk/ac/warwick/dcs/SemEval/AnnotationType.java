@@ -144,7 +144,6 @@ public class AnnotationType {
 			return "s";
 		default:
 			return "q";
-			
 		}
 	}
 	
@@ -161,6 +160,7 @@ public class AnnotationType {
 		ret.add("e");
 		ret.add("p");
 		ret.add("q");
+		ret.add("s");
 		return ret;
 	}
 	
