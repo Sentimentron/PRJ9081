@@ -32,6 +32,10 @@ public class SubjectivityApp extends SentimentApp {
 		super();
 	}
     
+    public SubjectivityApp(SemEvalTaskAReader r) throws IOException {
+    	super(r);
+    }
+
     protected ArrayList<Attribute> getAttributes() {
 		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
 		attrs.add(new Attribute("conf1"));
