@@ -190,11 +190,54 @@ public class SubjectivityApp extends SentimentApp {
 		sa.posTagTweets();
 		sa.updateSubjectivityMap();
 		System.out.println("Training tweeter-dev-full-A-tweets.tsv on tweeter-dev-full-A-tweets.tsv...");
-		sa.selfEvaluate();
-		sa.crossValidate();
+		System.out.println("Using default SubjectivityMap...");
+		//sa.selfEvaluate();
+		//sa.crossValidate();
 		sa.crossValidateSentences();
+		
+		/*sa.setSubjectivityMap(new RegexpSubjectivityMap());
+		sa.updateSubjectivityMap();
+		sa.crossValidateSentences();*/
+		
+		for (int alpha = 5; alpha <= 15; alpha++) {
+			for (int beta = 5; beta <= 15; beta++) {
+				sa.setSubjectivityMap(new BetaEstimatingSubjectivityMap(alpha, beta));
+				sa.updateSubjectivityMap();
+				System.out.println("Using BetaEstimatingSubjectivityMap...");
+				System.out.printf("alpha = %d\tbeta = %d\n", alpha, beta);
+				sa.crossValidateSentences();
+			}
+		}
+		
+		/*sa.setSubjectivityMap(new LowerCaseSubjectivityMap());
+		sa.updateSubjectivityMap();
+		System.out.println("Using LowerCaseSubjectivityMap...");
+		sa.crossValidateSentences();
+		
+		sa.setSubjectivityMap(new PosTaggedSubjectivityMap());
+		sa.updateSubjectivityMap();
+		System.out.println("Using PosTaggedSubjectivityMap...");
+		sa.crossValidateSentences();
+		
+		sa.setSubjectivityMap(new StemmingSubjectivityMap());
+		sa.updateSubjectivityMap();
+		System.out.println("Using StemmingSubjectivityMap...");
+		sa.crossValidateSentences();*/
+		
+		
+		/*for (int alpha = 2; alpha <= 3; alpha++) {
+			for(int beta = 1; beta <= 5; beta++) {
+				sa.setSubjectivityMap(new BetaEstimatingSubjectivityMap(alpha, beta));
+				sa.updateSubjectivityMap();
+				System.out.println("Using BetaEstimatingSubjectivityMap...");
+				System.out.printf("alpha = %d\tbeta = %d\n", alpha, beta);
+				sa.crossValidateSentences();
+			}
+		}*/
+		
+		
 
-		SubjectivityApp trainer = new SubjectivityApp(new SemEvalTaskAReader(
+		/*SubjectivityApp trainer = new SubjectivityApp(new SemEvalTaskAReader(
 				"twitter-test-gold-A.tsv"));
 
 		trainer.readTweets();
@@ -207,7 +250,7 @@ public class SubjectivityApp extends SentimentApp {
 
 		System.out.println("Training tweeter-dev-full-A-tweets.tsv on twitter-test-gold-A.tsv...");
 		clf = sa.buildClassifier();
-		trainer.evaluateOn(clf);
+		trainer.evaluateOn(clf);*/
 
     }
 }
