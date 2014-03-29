@@ -15,6 +15,50 @@ public class AnnotationType {
 	
 	AnnotationKind type;
 	
+	public static AnnotationKind computeConsensus(List<AnnotationKind> kList) {
+		int objectiveFound = 0;
+		int negativeFound  = 0;
+		int neutralFound   = 0;
+		int positiveFound  = 0;
+		
+		for (AnnotationKind k : kList) {
+			switch(k) {
+			case Objective:
+				objectiveFound++;
+				break;
+			case Negative:
+				negativeFound++;
+				break;
+			case Neutral:
+				neutralFound++;
+				break;
+			case Positive:
+				positiveFound++;
+				break;
+			default:
+				System.err.println("outputConsensusAnnotation: should only be getting p, q, n, e.");
+			}
+		}
+		
+		int mostPopular = objectiveFound;
+		AnnotationKind ret = AnnotationKind.Objective;
+		
+		if (negativeFound >= mostPopular) {
+			mostPopular = negativeFound;
+			ret = AnnotationKind.Negative;
+		}
+		if (positiveFound >= mostPopular) {
+			mostPopular = positiveFound;
+			ret = AnnotationKind.Positive;
+		}
+		if (neutralFound >= mostPopular) {
+			mostPopular = neutralFound;
+			ret = AnnotationKind.Neutral;
+		}
+		
+		return ret;
+	}
+	
 	public AnnotationType(AnnotationKind k) {
 		this.type = k;
 	}

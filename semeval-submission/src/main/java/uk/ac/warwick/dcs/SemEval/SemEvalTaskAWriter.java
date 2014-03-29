@@ -3,6 +3,8 @@ package uk.ac.warwick.dcs.SemEval;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 
@@ -16,47 +18,16 @@ public class SemEvalTaskAWriter {
 	
 	private String outputConsensusAnnotation(Tweet t, int offsetStart, int offsetEnd) {
 		
-		int objectiveFound = 0;
-		int negativeFound  = 0;
-		int neutralFound   = 0;
-		int positiveFound  = 0;
+		
+		List<AnnotationKind> kList = new ArrayList<AnnotationKind>();
 		
 		for (int i = offsetStart; i <= offsetEnd; i++) {
 			AnnotationType k = t.getAnnotations().get(i);
 			if (k == null) continue;
-			switch(k.getKind()) {
-			case Objective:
-				objectiveFound++;
-				break;
-			case Negative:
-				negativeFound++;
-				break;
-			case Neutral:
-				neutralFound++;
-				break;
-			case Positive:
-				positiveFound++;
-				break;
-			default:
-				System.err.println("outputConsensusAnnotation: should only be getting p, q, n, e.");
-			}
+			kList.add(k.getKind());
 		}
 		
-		int mostPopular = objectiveFound;
-		AnnotationKind ret = AnnotationKind.Objective;
-		
-		if (negativeFound >= mostPopular) {
-			mostPopular = negativeFound;
-			ret = AnnotationKind.Negative;
-		}
-		if (positiveFound >= mostPopular) {
-			mostPopular = positiveFound;
-			ret = AnnotationKind.Positive;
-		}
-		if (neutralFound >= mostPopular) {
-			mostPopular = neutralFound;
-			ret = AnnotationKind.Neutral;
-		}
+		AnnotationKind ret = AnnotationType.computeConsensus(kList);
 		
 		switch(ret) {
 		case Objective:
