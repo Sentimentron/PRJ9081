@@ -81,6 +81,22 @@ public class AnnotationType {
 		}
 	}
 	
+	public static AnnotationKind fromChar(char s) {
+		
+		switch(s) {
+			case 'p':
+				return AnnotationKind.Positive;
+			case 'n':
+				return AnnotationKind.Negative;
+			case 'e':
+				return AnnotationKind.Neutral;
+			case 's':
+				return AnnotationKind.Subjective;
+			default:
+				return AnnotationKind.Objective;
+		}
+	}
+	
 	public AnnotationType clone() {
 		return new AnnotationType(this.getKind());
 	}
