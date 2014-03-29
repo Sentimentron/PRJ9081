@@ -33,7 +33,7 @@ public class TweetTests {
 	
 	@Test
 	public void testReading() throws Exception {
-		SemEvalTaskAReader r = new SemEvalTaskAReader("tweeter-dev-full-A-tweets-sample.tsv");
+		ITweetReader r = new SemEvalTaskAReader("tweeter-dev-full-A-tweets-sample.tsv");
 		List<Tweet> tweets = r.readTweets();
 		
 		Tweet t1r = tweets.get(0);

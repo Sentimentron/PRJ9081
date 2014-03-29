@@ -32,7 +32,7 @@ public class SubjectivityApp extends SentimentApp {
 		super();
 	}
     
-    public SubjectivityApp(SemEvalTaskAReader r) throws IOException {
+    public SubjectivityApp(ITweetReader r) throws IOException {
     	super(r);
     }
 

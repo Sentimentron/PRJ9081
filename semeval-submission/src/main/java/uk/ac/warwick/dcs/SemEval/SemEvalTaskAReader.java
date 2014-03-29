@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 import edu.stanford.nlp.util.Pair;
 
-public class SemEvalTaskAReader {
+public class SemEvalTaskAReader implements ITweetReader {
 	
 	private String path;
 	
@@ -75,6 +75,10 @@ public class SemEvalTaskAReader {
 		return ret;
 	}
 	
+	/* (non-Javadoc)
+	 * @see uk.ac.warwick.dcs.SemEval.ITweetReader#readTweets()
+	 */
+	@Override
 	public List<Tweet> readTweets() throws Exception {
 		List<Tweet> ret = new ArrayList<Tweet>();
 		for (Map.Entry<Pair<Long, Integer>, Tweet> e: this.readFromFile().entrySet()) {

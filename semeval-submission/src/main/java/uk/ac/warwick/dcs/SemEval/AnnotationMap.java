@@ -14,8 +14,8 @@ import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
 
 public class AnnotationMap implements Map<Integer, AnnotationType> {
 
-	private Map<Integer, AnnotationType> impl;
-	private List<AnnotationSpan> spanList;
+	protected Map<Integer, AnnotationType> impl;
+	protected List<AnnotationSpan> spanList;
 	
 	public enum DuplicationStrategy {
 		Replace

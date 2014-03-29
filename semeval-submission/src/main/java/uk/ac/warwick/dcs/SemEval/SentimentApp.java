@@ -22,7 +22,7 @@ import cmu.arktweetnlp.RawTagger;
  */
 public abstract class SentimentApp {
 
-	protected SemEvalTaskAReader r;
+	protected ITweetReader r;
 	protected SubjectivityMap sm;
 	protected RawTagger posTagger;
 	protected List<Tweet> tweets;
@@ -73,7 +73,7 @@ public abstract class SentimentApp {
 		this.tweets = tweets;
 	}
 	
-	public SentimentApp(SemEvalTaskAReader r) throws IOException {
+	public SentimentApp(ITweetReader r) throws IOException {
 		this("model.20120919");
 		this.r = r;
 	}
