@@ -29,7 +29,8 @@ public abstract class SentimentApp {
 	protected List<POSTaggedTweet> taggedTweets;
 	protected Set<String> modifierWords;
 	protected Map<String, Attribute> attrMap;
-
+	protected long timeCreated;
+	
 	public SubjectivityMap getSubjectivityMap() {
 		return this.sm;
 	}
@@ -44,6 +45,7 @@ public abstract class SentimentApp {
 	 * @throws IOException
 	 */
 	public SentimentApp(String model) throws IOException {
+		this.timeCreated = System.nanoTime();
 		this.sm = new SubjectivityMap();
 		this.posTagger = new RawTagger();
 		posTagger.loadModel(model);
