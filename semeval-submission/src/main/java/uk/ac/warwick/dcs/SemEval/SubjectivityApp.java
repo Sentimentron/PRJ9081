@@ -172,14 +172,31 @@ public class SubjectivityApp extends SentimentApp {
     	
     }
     
-	public static void main( String[] args ) throws Exception
+    public static void main( String[] args ) throws Exception
     {		
-    	SubjectivityApp sa = new SubjectivityApp();
-    	sa.readTweets();
-    	sa.posTagTweets();
-    	sa.updateSubjectivityMap();
-    	sa.selfEvaluate();
-    	sa.crossValidate();
-    	sa.crossValidateSentences();		
+		SubjectivityApp sa = new SubjectivityApp();
+		sa.readTweets();
+		sa.posTagTweets();
+		sa.updateSubjectivityMap();
+		System.out.println("Training tweeter-dev-full-A-tweets.tsv on tweeter-dev-full-A-tweets.tsv...");
+		sa.selfEvaluate();
+		sa.crossValidate();
+		sa.crossValidateSentences();
+
+		SubjectivityApp trainer = new SubjectivityApp(new SemEvalTaskAReader(
+				"twitter-test-gold-A.tsv"));
+
+		trainer.readTweets();
+		trainer.posTagTweets();
+		trainer.updateSubjectivityMap();
+
+		System.out.println("Training twitter-test-gold-A.tsv on tweeter-dev-full-A-tweets.tsv...");
+		AbstractClassifier clf = trainer.buildClassifier();
+		sa.evaluateOn(clf);
+
+		System.out.println("Training tweeter-dev-full-A-tweets.tsv on twitter-test-gold-A.tsv...");
+		clf = sa.buildClassifier();
+		trainer.evaluateOn(clf);
+
     }
 }
