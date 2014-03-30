@@ -16,21 +16,15 @@ public class SubjectivityInvestigationApp {
 		trainSrc.addReader(new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv"));
 		trainSrc.addReader(new SemEvalTaskAReader("twitter-train-full-A.tsv"));
 		
-		SubjectivityApp subjectivityMapSource = new SubjectivityApp(trainSrc);
-		subjectivityMapSource.readTweets();
-		subjectivityMapSource.posTagTweets();
-		subjectivityMapSource.updateSubjectivityMap();
-		
-		SubjectivityApp subjectivityInstanceSource = new SubjectivityApp(
-				new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv")
-			);
-		subjectivityInstanceSource.readTweets();
-		subjectivityInstanceSource.posTagTweets();
+		SubjectivityApp subjectivitySource = new SubjectivityApp(trainSrc);
+		subjectivitySource.readTweets();
+		subjectivitySource.posTagTweets();
+		subjectivitySource.updateSubjectivityMap();
 		
 		SubjectivityApp subjectivityTarget = new SubjectivityApp(testSrc);
 		subjectivityTarget.readTweets();
 		subjectivityTarget.posTagTweets();
-		subjectivityTarget.setSubjectivityMap(subjectivityMapSource.getSubjectivityMap());
+		subjectivityTarget.setSubjectivityMap(subjectivitySource.getSubjectivityMap());
 		
 		Instances subjectiveInstances = subjectivityTarget.createInstances();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("subjectiveTarget.arff"));
@@ -38,8 +32,7 @@ public class SubjectivityInvestigationApp {
 		writer.flush();
 		writer.close();
 		
-		subjectivityInstanceSource.setSubjectivityMap(subjectivityMapSource.getSubjectivityMap());
-		subjectiveInstances = subjectivityInstanceSource.createInstances();
+		subjectiveInstances = subjectivitySource.createInstances();
 		writer = new BufferedWriter(new FileWriter("subjectiveSource.arff"));
 		writer.write(subjectiveInstances.toString());
 		writer.flush();

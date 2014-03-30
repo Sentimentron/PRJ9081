@@ -13,6 +13,7 @@ import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.SimpleLogistic;
+import weka.classifiers.functions.VotedPerceptron;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -80,7 +81,7 @@ public class SubjectivityApp extends SentimentApp {
     
     @Override
     protected AbstractClassifier getUntrainedClassifier() {
-    	return new SimpleLogistic();
+    	return new VotedPerceptron();
     }
     
     @Override
