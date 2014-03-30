@@ -26,7 +26,7 @@ public class BenchmarkApp {
 		SubjectivityApp subjectivityTarget = new SubjectivityApp(testReader);
 		subjectivityTarget.readTweets();
 		subjectivityTarget.posTagTweets();
-		subjectivityTarget.updateSubjectivityMap();
+		subjectivityTarget.setSubjectivityMap(subjectivitySource.getSubjectivityMap());
 		subjectivityTarget.applyPredictions(clfSubjective, subjectivitySource.getSubjectivityMap());
 		
 		WordSentimentApp wordAnnotationSource = new WordSentimentApp(trainSrc);
