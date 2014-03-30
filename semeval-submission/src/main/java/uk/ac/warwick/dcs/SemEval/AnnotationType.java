@@ -11,6 +11,7 @@ public class AnnotationType {
 		Neutral,
 		Objective,
 		Subjective, // This means we don't know whether is positive, negative, neutral
+		Unknown,
 	}
 	
 	AnnotationKind type;
@@ -106,11 +107,13 @@ public class AnnotationType {
 		else if (s.equals("positive")) return new AnnotationType(AnnotationKind.Positive);
 		else if(s.equals("neutral")) return new AnnotationType(AnnotationKind.Neutral);
 		else if(s.equals("objective")) return new AnnotationType(AnnotationKind.Objective);
+		else if(s.equals("objective-OR-neutral")) return new AnnotationType(AnnotationKind.Neutral);
+		else if(s.equals("unknwn")) return new AnnotationType(AnnotationKind.Unknown);
 		else {
 			throw new Exception(String.format("Can't interpret annotation string '%s'", s));
 		}
 	}
-	
+		
 	public boolean isSubjective() {
 		return this.type != AnnotationKind.Objective;
 	}
