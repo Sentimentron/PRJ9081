@@ -13,6 +13,7 @@ import java.util.Set;
 
 import edu.stanford.nlp.util.Pair;
 import weka.classifiers.AbstractClassifier;
+import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -24,9 +25,7 @@ public class PolarityApp extends SentimentApp {
 		super(list);
 	}
 
-	@Override
-	protected Instances createInstances() {
-		
+	protected Set<Pair<String, String>> createThresholdedBigrams() {
 		Counter<Pair<String, String>> bigrams = new Counter<Pair<String, String>>(); 
 		
 		for (POSTaggedTweet pt : this.taggedTweets) {
@@ -47,15 +46,41 @@ public class PolarityApp extends SentimentApp {
 			thresholdedBigrams.add(e.getKey());
 		}
 		
-		// Constructing attribute map 
+		return thresholdedBigrams;
+	}
+	
+	protected Map<Pair<String, String>, Attribute> createAttributeMap(
+			Set<Pair<String, String>> thresholdedBigrams
+			) {
+		
 		Map<Pair<String, String>, Attribute> attributeMap = new TreeMap<Pair<String,String>, Attribute>();
 		List<String> nominalVals = new ArrayList<String>();
-		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 		nominalVals.add("present");
 		nominalVals.add("notPresent");
 		for (Pair<String, String> p : thresholdedBigrams) {
 			Attribute attr = new Attribute(String.format("%s|%s", p.first, p.second), nominalVals);
 			attributeMap.put(p, attr);
+		}
+		return attributeMap;
+	}
+	
+	@Override
+	protected Instances createInstances() {
+		Set<Pair<String, String>> thresholdedBigrams = this.createThresholdedBigrams();
+		Map<Pair<String, String>, Attribute> attributeMap = this.createAttributeMap(thresholdedBigrams);
+		return this.createInstances(thresholdedBigrams, attributeMap);
+	}
+	
+	protected Instances createInstances(Set<Pair<String, String>> thresholdedBigrams,
+			Map<Pair<String, String>, Attribute> attributeMap
+		) {
+		// Constructing attribute map 
+		List<String> nominalVals = new ArrayList<String>();
+		nominalVals.add("present");
+		nominalVals.add("notPresent");
+		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+
+		for (Attribute attr : attributeMap.values()) {
 			attributes.add(attr);
 		}
 		
@@ -111,14 +136,13 @@ public class PolarityApp extends SentimentApp {
 
 	@Override
 	protected AbstractClassifier getUntrainedClassifier() {
-		// TODO Auto-generated method stub
-		return null;
+		return new NaiveBayes();
 	}
 
 	@Override
 	protected AbstractClassifier buildClassifier() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		AbstractClassifier clf = this.getUntrainedClassifier();
+		
 	}
 
 	@Override
