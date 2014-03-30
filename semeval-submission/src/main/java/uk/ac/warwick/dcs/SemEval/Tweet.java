@@ -1,5 +1,6 @@
 package uk.ac.warwick.dcs.SemEval;
 
+import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
 
 public class Tweet {
@@ -7,6 +8,8 @@ public class Tweet {
 	protected AnnotationMap annotations;
 	protected String text;
 	private int maxLength;
+	
+	private AnnotationType annotation;
 	
 	private long id1;
 	private int id2;

@@ -40,7 +40,7 @@ public class BenchmarkApp {
 		wordAnnotationTarget.applyPredictions(clfWords, wordAnnotationSource.generateModifierWords());
 		
 		for (Tweet outputTweet : wordAnnotationTarget.getTweets()) {
-			TestingTweet fmtOutput = (TestingTweet)outputTweet;
+			TestingATweet fmtOutput = (TestingATweet)outputTweet;
 			for (Pair<Integer, Integer> section : fmtOutput.getInterestingSections()) {
 				testWriter.writeTweet(outputTweet, section.first, section.second);
 			}

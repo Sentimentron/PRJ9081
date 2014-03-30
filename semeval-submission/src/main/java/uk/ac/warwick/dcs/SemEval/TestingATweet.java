@@ -5,17 +5,17 @@ import java.util.List;
 
 import edu.stanford.nlp.util.Pair;
 
-public class TestingTweet extends Tweet {
+public class TestingATweet extends Tweet {
 
 	List<Pair<Integer, Integer>> interestingSections;
 	
-	public TestingTweet(String text, long id1, int id2) {
+	public TestingATweet(String text, long id1, int id2) {
 		super(text, id1, id2);
 		
 		this.interestingSections = new ArrayList<Pair<Integer, Integer>>();
 	}
 	
-	public TestingTweet(String text, long id1, int id2,
+	public TestingATweet(String text, long id1, int id2,
 			List<Pair<Integer, Integer>> interestingSections) {
 		this(text, id1, id2);
 		for (Pair<Integer, Integer> section: interestingSections) {

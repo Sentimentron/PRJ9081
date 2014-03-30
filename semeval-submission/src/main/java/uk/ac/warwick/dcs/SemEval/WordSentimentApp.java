@@ -106,8 +106,8 @@ public class WordSentimentApp extends SentimentApp {
 		
 		for (int i = 0; i < pt.size(); i++) {
 			AnnotationType a;
-			if (t.getParent() instanceof TestingTweet) {
-				TestingTweet tw = (TestingTweet) t.getParent();
+			if (t.getParent() instanceof TestingATweet) {
+				TestingATweet tw = (TestingATweet) t.getParent();
 				if (!tw.inInterestingSection(i)) continue;
 				a = new AnnotationType(AnnotationKind.Subjective);
 			}

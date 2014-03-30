@@ -17,13 +17,13 @@ public class SemEvalTaskATestReader implements ITweetReader {
 		this.path = path;
 	}
 	
-	private Map<Integer, TestingTweet> readFromFile() throws Exception {
+	private Map<Integer, TestingATweet> readFromFile() throws Exception {
 		
 		BufferedReader br;
 		String line;
-		Map<Integer, TestingTweet> ret;
+		Map<Integer, TestingATweet> ret;
 		
-		ret = new TreeMap<Integer, TestingTweet>();
+		ret = new TreeMap<Integer, TestingATweet>();
 		br = new BufferedReader(new FileReader(this.path));
 		
 		while ((line = br.readLine()) != null) {
@@ -39,12 +39,12 @@ public class SemEvalTaskATestReader implements ITweetReader {
 			int end   = Integer.parseInt(fields[3]);
 			String text = fields[5];
 			
-			TestingTweet out;
+			TestingATweet out;
 			if (ret.containsKey(identifier2)) {
 				out = ret.get(identifier2);
 			}
 			else {
-				out = new TestingTweet(text, identifier1, identifier2);
+				out = new TestingATweet(text, identifier1, identifier2);
 				ret.put(identifier2, out);
 			}
 			
@@ -59,8 +59,8 @@ public class SemEvalTaskATestReader implements ITweetReader {
 	@Override
 	public List<Tweet> readTweets() throws Exception {
 		List<Tweet> ret = new ArrayList<Tweet>();
-		Map<Integer, TestingTweet> tweets = this.readFromFile();
-		for (TestingTweet t : tweets.values()) {
+		Map<Integer, TestingATweet> tweets = this.readFromFile();
+		for (TestingATweet t : tweets.values()) {
 			ret.add(t);
 		}
 		return ret;
