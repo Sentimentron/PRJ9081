@@ -11,7 +11,11 @@ public class BenchmarkApp {
 
 		SemEvalTaskAWriter testWriter = new SemEvalTaskAWriter("output.pred");
 		SemEvalTaskATestReader testReader = new SemEvalTaskATestReader("twitter-test-gold-A.tsv");
-		ITweetReader trainSrc = new NebraskaReader("amt.sqlite");
+		
+		MultiTweetReader trainSrc = new MultiTweetReader();
+		//trainSrc.addReader(new NebraskaReader("amt.sqlite"));
+		trainSrc.addReader(new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv"));
+		trainSrc.addReader(new SemEvalTaskAReader("twitter-train-full-A.tsv"));
 		
 		SubjectivityApp subjectivitySource = new SubjectivityApp(trainSrc);
 		subjectivitySource.readTweets();
