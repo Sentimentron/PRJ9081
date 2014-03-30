@@ -25,6 +25,10 @@ public class PolarityApp extends SentimentApp {
 		super(list);
 	}
 
+	public PolarityApp(ITweetReader r) throws IOException {
+		super(r);
+	}
+
 	protected Set<Pair<String, String>> createThresholdedBigrams() {
 		Counter<Pair<String, String>> bigrams = new Counter<Pair<String, String>>(); 
 		
@@ -65,53 +69,54 @@ public class PolarityApp extends SentimentApp {
 	}
 	
 	@Override
-	protected Instances createInstances() {
+	protected Instances createInstances() throws Exception {
 		Set<Pair<String, String>> thresholdedBigrams = this.createThresholdedBigrams();
 		Map<Pair<String, String>, Attribute> attributeMap = this.createAttributeMap(thresholdedBigrams);
 		return this.createInstances(thresholdedBigrams, attributeMap);
 	}
 	
-	protected Instances createInstances(Set<Pair<String, String>> thresholdedBigrams,
-			Map<Pair<String, String>, Attribute> attributeMap
-		) {
-		// Constructing attribute map 
-		List<String> nominalVals = new ArrayList<String>();
-		nominalVals.add("present");
-		nominalVals.add("notPresent");
-		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
-
-		for (Attribute attr : attributeMap.values()) {
-			attributes.add(attr);
-		}
+	protected Map<TestingBTweet, Instance> createInstancesForTweets(
+			Set<Pair<String, String>> thresholdedBigrams,
+			Map<Pair<String, String>, Attribute> attributeMap, 
+			Instance templateInstance, Instances dataSet,
+			Attribute pnePercentPAttr,
+			Attribute pnePercentNAttr,
+			Attribute pnePercentEAttr,
+			Attribute sentimentClassAttr
+			) throws Exception {
 		
-		// Constructing PNE percentage attribute
-		Attribute pnePercentAttr = new Attribute("PNEPercentage");
-		attributes.add(pnePercentAttr);
-		
-		// Constructing class attribute
-		Attribute sentimentClassAttr = new Attribute("sentimentClass", AnnotationType.getNominalList());
-		attributes.add(sentimentClassAttr);
-		
-		// Construct Instances, Instance template
-		Instances ret = new Instances("bigramPolarity", attributes, 0);
-		Instance templateInstance = new DenseInstance(attributes.size());
-		
-		for (POSTaggedTweet pt : this.taggedTweets) {
-			
+		Map<TestingBTweet, Instance> ret = new TreeMap<TestingBTweet, Instance>();
+		for (POSTaggedTweet pt: this.taggedTweets) {
 			TestingBTweet parent = (TestingBTweet)pt.getParent();
 			
 			Instance thisInstance = new DenseInstance(templateInstance);
-			thisInstance.setDataset(ret);
+			thisInstance.setDataset(dataSet);
 			
 			for (Pair<String, String> p : thresholdedBigrams) {
 				thisInstance.setValue(attributeMap.get(p), "notPresent");
 			}
 			
-			int totalSubjective = 0;
+			int totalPositive = 0;
+			int totalNegative = 0;
+			int totalNeutral  = 0;
 			List<POSToken> tList = pt.getPOSTokens();
 
 			for (POSToken p : tList) {
-				if (p.getAnnotation().isSubjective()) totalSubjective++;
+				switch(p.getAnnotation().getKind()) {
+				case Negative:
+					totalNegative++;
+					break;
+				case Neutral:
+					totalNeutral++;
+					break;
+				case Positive:
+					totalPositive++;
+					break;
+				case Objective:
+					break;
+				default:
+					throw new Exception("Why am I here?");
+				}
 			}
 			
 			for (int i = 0; i < tList.size()-1; i++) {
@@ -125,12 +130,52 @@ public class PolarityApp extends SentimentApp {
 				}
 			}
 			
-			thisInstance.setValue(pnePercentAttr, totalSubjective*100.0f/tList.size());
+			thisInstance.setValue(pnePercentEAttr, 1.0 * totalNeutral / tList.size());
+			thisInstance.setValue(pnePercentNAttr, 1.0 * totalNegative / tList.size());
+			thisInstance.setValue(pnePercentPAttr, 1.0 * totalPositive / tList.size());
 			thisInstance.setValue(sentimentClassAttr, parent.getAnnotation().toNominalSentiment());
-			ret.add(thisInstance);
+			ret.put(parent, thisInstance);
+		}
+		return ret;
+	}
+	
+	protected Instances createInstances(Set<Pair<String, String>> thresholdedBigrams,
+			Map<Pair<String, String>, Attribute> attributeMap
+		) throws Exception {
+		// Constructing attribute map 
+		List<String> nominalVals = new ArrayList<String>();
+		nominalVals.add("present");
+		nominalVals.add("notPresent");
+		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+
+		for (Attribute attr : attributeMap.values()) {
+			attributes.add(attr);
 		}
 		
-		// TODO Auto-generated method stub
+		// Constructing PNE percentage attribute
+		Attribute pnePercentPAttr = new Attribute("PNEPercentageP");
+		Attribute pnePercentNAttr = new Attribute("PNEPercentageN");
+		Attribute pnePercentEAttr = new Attribute("PNEPercentageE");
+		attributes.add(pnePercentPAttr);
+		attributes.add(pnePercentNAttr);
+		attributes.add(pnePercentEAttr);
+		
+		// Constructing class attribute
+		Attribute sentimentClassAttr = new Attribute("sentimentClass", AnnotationType.getNominalList());
+		attributes.add(sentimentClassAttr);
+		
+		// Construct Instances, Instance template
+		Instances ret = new Instances("bigramPolarity", attributes, 0);
+		Instance templateInstance = new DenseInstance(attributes.size());
+		ret.setClass(sentimentClassAttr);
+		
+		for (Instance instance : this.createInstancesForTweets(thresholdedBigrams, 
+				attributeMap, templateInstance, 
+				ret, pnePercentPAttr, 
+				pnePercentNAttr, pnePercentEAttr, sentimentClassAttr).values()) {
+			ret.add(instance);
+		}
+		
 		return ret;
 	}
 
@@ -138,11 +183,67 @@ public class PolarityApp extends SentimentApp {
 	protected AbstractClassifier getUntrainedClassifier() {
 		return new NaiveBayes();
 	}
-
+	
 	@Override
 	protected AbstractClassifier buildClassifier() throws Exception {
+		Set<Pair<String, String>> thresholdedBigrams = this.createThresholdedBigrams();
+		Map<Pair<String, String>, Attribute> polarityAttrMap = this.createAttributeMap(thresholdedBigrams);
+		return this.buildClassifier(thresholdedBigrams, polarityAttrMap);
+	}
+	
+	protected AbstractClassifier buildClassifier(Set<Pair<String, String>> thresholdedBigrams,
+			Map<Pair<String, String>, Attribute> polarityAttrMap
+	) throws Exception {
+		Instances trainingInstances = this.createInstances(thresholdedBigrams, polarityAttrMap);
 		AbstractClassifier clf = this.getUntrainedClassifier();
+		clf.buildClassifier(trainingInstances);
+		return clf;
+	}
+	
+	protected void applyPredictions(AbstractClassifier clf, 
+			Map<Pair<String, String>, Attribute> attributeMap,
+			Set<Pair<String, String>> thresholdedBigrams) throws Exception {
+		List<String> nominalVals = new ArrayList<String>();
+		nominalVals.add("present");
+		nominalVals.add("notPresent");
+		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+
+		for (Attribute attr : attributeMap.values()) {
+			attributes.add(attr);
+		}
 		
+		// Constructing PNE percentage attribute
+		Attribute pnePercentPAttr = new Attribute("PNEPercentageP");
+		Attribute pnePercentNAttr = new Attribute("PNEPercentageN");
+		Attribute pnePercentEAttr = new Attribute("PNEPercentageE");
+		attributes.add(pnePercentPAttr);
+		attributes.add(pnePercentNAttr);
+		attributes.add(pnePercentEAttr);
+		
+		// Constructing class attribute
+		Attribute sentimentClassAttr = new Attribute("sentimentClass", AnnotationType.getNominalList());
+		attributes.add(sentimentClassAttr);
+		
+		// Construct Instances, Instance template
+		Instances ret = new Instances("bigramPolarity", attributes, 0);
+		ret.setClass(sentimentClassAttr);
+		Instance templateInstance = new DenseInstance(attributes.size());
+		
+		for (Entry<TestingBTweet, Instance> e : this.createInstancesForTweets(thresholdedBigrams, 
+				attributeMap, templateInstance, 
+				ret, pnePercentPAttr, 
+				pnePercentNAttr, pnePercentEAttr, sentimentClassAttr).entrySet()) {
+			
+			double prediction = clf.classifyInstance(e.getValue());
+			String predictionStr = sentimentClassAttr.value((int) prediction);
+			AnnotationType a = new AnnotationType(predictionStr);
+			e.getKey().setAnnotation(a);
+		}
+		
+		this.tweets.clear();
+		for (POSTaggedTweet p : this.taggedTweets) {
+    		this.tweets.add(p.getParent());
+    	}
 	}
 
 	@Override
@@ -152,11 +253,11 @@ public class PolarityApp extends SentimentApp {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		SemEvalTaskAReader subjReader = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");
+		ITweetReader trainSrc = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");
 		SemEvalTaskBWriter testWriter = new SemEvalTaskBWriter("output.B.pred");
 		SemEvalTaskBReader testReader = new SemEvalTaskBReader("twitter-test-gold-B.tsv");
 		
-		SubjectivityApp subjectivitySrc = new SubjectivityApp(subjReader);
+		SubjectivityApp subjectivitySrc = new SubjectivityApp(trainSrc);
 		subjectivitySrc.readTweets();
 		subjectivitySrc.posTagTweets();
 		AbstractClassifier clfSubjective = subjectivitySrc.buildClassifier();
@@ -167,12 +268,29 @@ public class PolarityApp extends SentimentApp {
 		subjectivityTarget.setSubjectivityMap(subjectivitySrc.getSubjectivityMap());
 		subjectivityTarget.applyPredictions(clfSubjective, subjectivitySrc.getSubjectivityMap());
 		
-		PolarityApp p = new PolarityApp(subjectivityTarget.getTweets());
-		p.posTagTweets();
+		WordSentimentApp wordAnnotationSource = new WordSentimentApp(trainSrc);
+		wordAnnotationSource.readTweets();
+		wordAnnotationSource.posTagTweets();
+		wordAnnotationSource.updateSubjectivityMap();
+		AbstractClassifier clfWords = wordAnnotationSource.buildClassifier();
 		
-		Instances toExport = p.createInstances();
-		BufferedWriter br = new BufferedWriter(new FileWriter("polarity.arff"));
-		br.write(toExport.toString());
+		WordSentimentApp wordAnnotationTarget = new WordSentimentApp(subjectivityTarget.getTweets());
+		wordAnnotationTarget.posTagTweets();
+		wordAnnotationTarget.applyPredictions(clfWords, wordAnnotationSource.generateModifierWords());
+		
+		PolarityApp polaritySrc = new PolarityApp(wordAnnotationTarget.getTweets());
+		polaritySrc.posTagTweets();
+		
+		Set<Pair<String, String>> thresholdedBigrams = polaritySrc.createThresholdedBigrams();
+		Map<Pair<String, String>, Attribute> polarityAttrMap = polaritySrc.createAttributeMap(thresholdedBigrams);
+		AbstractClassifier clfPolarity = polaritySrc.buildClassifier(thresholdedBigrams, polarityAttrMap);
+		
+		PolarityApp polarityTarget = new PolarityApp(subjectivityTarget.getTweets());
+		polarityTarget.posTagTweets();
+		polarityTarget.applyPredictions(clfPolarity, polarityAttrMap, thresholdedBigrams);
+		for (Tweet p : polarityTarget.getTweets()) {
+			testWriter.writeTweet((TestingBTweet)p);
+		}
 	}
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import edu.stanford.nlp.util.Pair;
 
 
-public class TestingBTweet extends Tweet {
+public class TestingBTweet extends Tweet implements Comparable<TestingBTweet> {
 
 	private AnnotationType annotation;
 	
@@ -25,6 +25,25 @@ public class TestingBTweet extends Tweet {
 	
 	public void setAnnotation(AnnotationType a) {
 		this.annotation = a;
+	}
+
+	@Override
+	public int compareTo(TestingBTweet o) {
+		int ret = this.getText().compareTo(o.getText());
+		if (ret != 0) return ret; 
+		if (this.getId1() > o.getId1()) {
+			return 1;
+		}
+		else if (this.getId1() < o.getId1()) {
+			return -1;
+		}
+		else if (this.getId2() > o.getId2()) {
+			return 1;
+		}
+		else if (this.getId2() < o.getId2()) {
+			return -1;
+		}
+		return 0;
 	}
 	
 }

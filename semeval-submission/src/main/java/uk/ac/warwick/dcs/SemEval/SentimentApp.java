@@ -221,8 +221,9 @@ public abstract class SentimentApp {
 	 * WordSentimentApp and SubjecitivityApp have customised versions
 	 * which allow generating a subset of all possible instances.
 	 * @return A list of WEKA instances for classification
+	 * @throws Exception 
 	 */
-	protected abstract Instances createInstances();
+	protected abstract Instances createInstances() throws Exception;
 	/**
 	 * Create a classifier with the default options + return it
 	 * @return A WEKA AbstractClassifier ready for training.
