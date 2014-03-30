@@ -267,16 +267,16 @@ public class PolarityApp extends SentimentApp {
 	
 	public static void main(String[] args) throws Exception {
 		SemEvalTaskBWriter testWriter = new SemEvalTaskBWriter("output.B.pred");
-		SemEvalTaskBReader testReader = new SemEvalTaskBReader("twitter-test-gold-B.tsv");
+		SemEvalTaskBReader testReader = new SemEvalTaskBReader("SemEval2014-task9-test-B-input.txt");
 		
 		MultiTweetReader trainSrc = new MultiTweetReader();
 		MultiTweetReader bTrainSrc = new MultiTweetReader();
 		trainSrc.addReader(new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv"));
 		trainSrc.addReader(new SemEvalTaskAReader("twitter-train-full-A.tsv"));
-		trainSrc.addReader(new NebraskaReader("amt.sqlite"));
+		//trainSrc.addReader(new NebraskaReader("amt.sqlite"));
 		bTrainSrc.addReader(new SemEvalTaskBReader("twitter-test-gold-B.tsv"));
 		bTrainSrc.addReader(new SemEvalTaskBReader("twitter-train-full-B.tsv"));
-		bTrainSrc.addReader(new NebraskaReaderB("amt.sqlite"));
+		//bTrainSrc.addReader(new NebraskaReaderB("amt.sqlite"));
 		
 		SubjectivityApp subjectivitySrc = new SubjectivityApp(trainSrc);
 		subjectivitySrc.readTweets();
