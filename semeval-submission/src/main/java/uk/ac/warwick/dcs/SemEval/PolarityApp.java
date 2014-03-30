@@ -18,6 +18,8 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.supervised.instance.Resample;
 
 public class PolarityApp extends SentimentApp {
 
@@ -46,7 +48,7 @@ public class PolarityApp extends SentimentApp {
 		// Thresholding 
 		Set<Pair<String, String>> thresholdedBigrams = new TreeSet<Pair<String,String>>();
 		for (Entry<Pair<String,String>,Integer> e : bigrams.entrySet()) {
-			if (e.getValue() < 2) continue;
+			if (e.getValue() < 4) continue;
 			thresholdedBigrams.add(e.getKey());
 		}
 		
@@ -85,15 +87,23 @@ public class PolarityApp extends SentimentApp {
 			Attribute sentimentClassAttr
 			) throws Exception {
 		
+		int progressCounter = 0;
 		Map<TestingBTweet, Instance> ret = new TreeMap<TestingBTweet, Instance>();
 		for (POSTaggedTweet pt: this.taggedTweets) {
 			TestingBTweet parent = (TestingBTweet)pt.getParent();
+			progressCounter++;
+			if (progressCounter % 100 == 1 || progressCounter == taggedTweets.size()) {
+				System.err.printf("Creating instances (%d attribute(s), %d/%d complete, %.4f)\r", 
+						attributeMap.size()+4, progressCounter, taggedTweets.size(), 
+						progressCounter * 100.0 / taggedTweets.size()
+				);
+			}
 			
 			Instance thisInstance = new DenseInstance(templateInstance);
 			thisInstance.setDataset(dataSet);
 			
-			for (Pair<String, String> p : thresholdedBigrams) {
-				thisInstance.setValue(attributeMap.get(p), "notPresent");
+			for (Attribute a : attributeMap.values()) {
+				thisInstance.setValue(a, "notPresent");
 			}
 			
 			int totalPositive = 0;
@@ -176,7 +186,10 @@ public class PolarityApp extends SentimentApp {
 			ret.add(instance);
 		}
 		
-		return ret;
+		Resample resamplingFilter = new Resample();
+		resamplingFilter.setBiasToUniformClass(0.75);
+		resamplingFilter.setInputFormat(ret);
+		return Filter.useFilter(ret, resamplingFilter);
 	}
 
 	@Override
@@ -253,9 +266,15 @@ public class PolarityApp extends SentimentApp {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		ITweetReader trainSrc = new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv");
 		SemEvalTaskBWriter testWriter = new SemEvalTaskBWriter("output.B.pred");
 		SemEvalTaskBReader testReader = new SemEvalTaskBReader("twitter-test-gold-B.tsv");
+		
+		MultiTweetReader trainSrc = new MultiTweetReader();
+		MultiTweetReader bTrainSrc = new MultiTweetReader();
+		trainSrc.addReader(new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv"));
+		trainSrc.addReader(new SemEvalTaskAReader("twitter-train-full-A.tsv"));
+		bTrainSrc.addReader(new SemEvalTaskBReader("twitter-test-gold-B.tsv"));
+		bTrainSrc.addReader(new SemEvalTaskBReader("twitter-train-full-B.tsv"));
 		
 		SubjectivityApp subjectivitySrc = new SubjectivityApp(trainSrc);
 		subjectivitySrc.readTweets();
@@ -277,10 +296,10 @@ public class PolarityApp extends SentimentApp {
 		WordSentimentApp wordAnnotationTarget = new WordSentimentApp(subjectivityTarget.getTweets());
 		wordAnnotationTarget.posTagTweets();
 		wordAnnotationTarget.applyPredictions(clfWords, wordAnnotationSource.generateModifierWords());
-		
-		PolarityApp polaritySrc = new PolarityApp(wordAnnotationTarget.getTweets());
+				
+		PolarityApp polaritySrc = new PolarityApp(bTrainSrc);
+		polaritySrc.readTweets();
 		polaritySrc.posTagTweets();
-		
 		Set<Pair<String, String>> thresholdedBigrams = polaritySrc.createThresholdedBigrams();
 		Map<Pair<String, String>, Attribute> polarityAttrMap = polaritySrc.createAttributeMap(thresholdedBigrams);
 		AbstractClassifier clfPolarity = polaritySrc.buildClassifier(thresholdedBigrams, polarityAttrMap);
@@ -291,6 +310,8 @@ public class PolarityApp extends SentimentApp {
 		for (Tweet p : polarityTarget.getTweets()) {
 			testWriter.writeTweet((TestingBTweet)p);
 		}
+		
+		testWriter.finish();
 	}
 
 }

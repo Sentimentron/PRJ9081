@@ -10,7 +10,7 @@ public class BenchmarkApp {
 	public static void main(String[] args) throws Exception {
 
 		SemEvalTaskAWriter testWriter = new SemEvalTaskAWriter("output.pred");
-		SemEvalTaskATestReader testReader = new SemEvalTaskATestReader("twitter-test-gold-A.tsv");
+		SemEvalTaskATestReader testReader = new SemEvalTaskATestReader("SemEval2014-task9-test-A-input.txt");
 		
 		MultiTweetReader trainSrc = new MultiTweetReader();
 		//trainSrc.addReader(new NebraskaReader("amt.sqlite"));

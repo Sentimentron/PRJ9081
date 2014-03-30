@@ -44,4 +44,8 @@ public class SemEvalTaskBWriter {
 		this.bw.write(t.getText());
 		this.bw.write('\n');
 	}
+	
+	public void finish() throws IOException {
+		this.bw.close();
+	}
 }
