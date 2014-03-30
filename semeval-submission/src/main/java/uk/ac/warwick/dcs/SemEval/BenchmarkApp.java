@@ -13,7 +13,7 @@ public class BenchmarkApp {
 		SemEvalTaskATestReader testReader = new SemEvalTaskATestReader("SemEval2014-task9-test-A-input.txt");
 		
 		MultiTweetReader trainSrc = new MultiTweetReader();
-		//trainSrc.addReader(new NebraskaReader("amt.sqlite"));
+		trainSrc.addReader(new NebraskaReader("amt.sqlite"));
 		trainSrc.addReader(new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv"));
 		trainSrc.addReader(new SemEvalTaskAReader("twitter-train-full-A.tsv"));
 		
