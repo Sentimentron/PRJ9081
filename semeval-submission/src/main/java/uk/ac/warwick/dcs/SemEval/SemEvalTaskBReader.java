@@ -21,7 +21,13 @@ public class SemEvalTaskBReader implements ITweetReader {
 		BufferedReader br = new BufferedReader(new FileReader(this.path));
 		while ((line = br.readLine()) != null) {
 			String[] fields = line.split("\t");
-			long identifier1 = Long.parseLong(fields[0]);
+			long identifier1 = 0;
+			if (!fields[0].equals("NA")) {
+				identifier1 = Long.parseLong(fields[0]);
+			}
+			else {
+				identifier1 = 0;
+			}
 		    int identifier2 = Integer.parseInt(fields[1]);
 		    String polarity = fields[2];
 		    String tweet    = fields[3];

@@ -16,7 +16,7 @@ public class SemEvalTaskBWriter {
 	public String outputAnnotation(AnnotationKind ret) {
 		switch(ret) {
 		case Objective:
-			return "objective";
+			return "neutral";
 		case Positive:
 			return "positive";
 		case Neutral:

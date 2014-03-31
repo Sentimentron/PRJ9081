@@ -273,10 +273,10 @@ public class PolarityApp extends SentimentApp {
 		MultiTweetReader bTrainSrc = new MultiTweetReader();
 		trainSrc.addReader(new SemEvalTaskAReader("tweeter-dev-full-A-tweets.tsv"));
 		trainSrc.addReader(new SemEvalTaskAReader("twitter-train-full-A.tsv"));
-		//trainSrc.addReader(new NebraskaReader("amt.sqlite"));
-		bTrainSrc.addReader(new SemEvalTaskBReader("twitter-test-gold-B.tsv"));
+		trainSrc.addReader(new NebraskaReader("amt.sqlite"));
+		bTrainSrc.addReader(new SemEvalTaskBReader("tweeter-dev-full-B.tsv"));
 		bTrainSrc.addReader(new SemEvalTaskBReader("twitter-train-full-B.tsv"));
-		//bTrainSrc.addReader(new NebraskaReaderB("amt.sqlite"));
+		bTrainSrc.addReader(new NebraskaReaderB("amt.sqlite"));
 		
 		SubjectivityApp subjectivitySrc = new SubjectivityApp(trainSrc);
 		subjectivitySrc.readTweets();
