@@ -15,8 +15,10 @@ import java.util.TreeSet;
 
 import edu.stanford.nlp.util.Pair;
 import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -108,8 +110,21 @@ public class WordSentimentApp extends SentimentApp {
 			AnnotationType a;
 			if (t.getParent() instanceof TestingATweet) {
 				TestingATweet tw = (TestingATweet) t.getParent();
-				if (!tw.inInterestingSection(i)) continue;
-				a = new AnnotationType(AnnotationKind.Subjective);
+				int endCharOffset   = pt.get(i).endCharOffset;
+				int wordOffset = i;
+				try {
+					wordOffset = t.getWordOffset(endCharOffset);
+				}
+				catch(WordRangeMapException e) {
+					System.err.println(e.toString());
+				}
+				
+				if (tw.inInterestingSection(wordOffset)) {
+					a = new AnnotationType(AnnotationKind.Subjective);
+				}
+				else {
+					continue;
+				}
 			}
 			else {
 				// Don't bother exporting objective stuff
@@ -243,7 +258,9 @@ public class WordSentimentApp extends SentimentApp {
 
 	@Override
 	protected AbstractClassifier getUntrainedClassifier() {
-		return new RandomForest();
+		InputMappedClassifier ret = new InputMappedClassifier();
+		ret.setClassifier(new RandomForest());
+		return ret;
 	}
 
 	@Override

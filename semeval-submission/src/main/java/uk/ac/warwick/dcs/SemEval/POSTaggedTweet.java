@@ -26,8 +26,7 @@ public class POSTaggedTweet extends Tweet {
 		return ret;
 	}
 	
-	public void applyDerivedAnnotation(int derivedEndCharOffset, AnnotationType a) throws WordRangeMapException {
-		
+	public int getWordOffset(int derivedEndCharOffset) throws WordRangeMapException {
 		for (int i = insertedOffsets.size() - 1; i >= 0; i--) {
 			int insertedOffset = this.insertedOffsets.get(i);
 			// If the insertedOffset is greater than or equal to the derived offset
@@ -39,6 +38,12 @@ public class POSTaggedTweet extends Tweet {
 			
 		}
 		int wordOffset = this.origWm.getWordEndOffset(derivedEndCharOffset);
+		return wordOffset;
+	}
+	
+	public void applyDerivedAnnotation(int derivedEndCharOffset, AnnotationType a) throws WordRangeMapException {
+		
+		int wordOffset = this.getWordOffset(derivedEndCharOffset);
 		
 		this.parent.addAnnotation(new AnnotationSpan(a.getKind(), wordOffset, wordOffset));
 	}

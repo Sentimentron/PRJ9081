@@ -30,17 +30,14 @@ public class SemEvalTaskAWriter {
 		AnnotationKind ret = AnnotationType.computeConsensus(kList);
 		
 		switch(ret) {
-		case Objective:
-			return "objective";
-		case Positive:
-			return "positive";
 		case Neutral:
 			return "neutral";
+		case Positive:
+			return "positive";
 		case Negative:
 			return "negative";
 		default:
-			System.err.printf("ouputConsensusAnnotation: Warning: should't have %s here!\n", ret);
-			return "unknwn";
+			return "neutral";
 		}
 		
 	}
