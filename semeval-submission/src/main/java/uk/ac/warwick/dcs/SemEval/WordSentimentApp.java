@@ -54,9 +54,9 @@ public class WordSentimentApp extends SentimentApp {
 		
 		Map<String, Attribute> attributeMap = new TreeMap<String, Attribute>();
 		List<String> nominalVals = new ArrayList<String>();
+		nominalVals.add("notPresent");
 		nominalVals.add("before");
 		nominalVals.add("after");
-		nominalVals.add("notPresent");
 		nominalVals.add("present");
 		
 		for (String modifierWord : new TreeSet<String>(modifierWords)) {
@@ -106,6 +106,12 @@ public class WordSentimentApp extends SentimentApp {
 		List<Pair<Integer, Instance>> toExport = new ArrayList<Pair<Integer,Instance>>();
 		List<POSToken> pt = t.getPOSTokens();
 		
+		// Setup the default template values
+		Set<Attribute> currentlyNotSet = new HashSet<Attribute>(attributeMap.values());
+		for (Attribute attr : currentlyNotSet) {
+			template.setValue(attr, "notPresent");
+		}
+		
 		for (int i = 0; i < pt.size(); i++) {
 			AnnotationType a;
 			if (t.getParent() instanceof TestingATweet) {
@@ -135,11 +141,9 @@ public class WordSentimentApp extends SentimentApp {
 			
 			// Create an instance which represents the context 
 			// of a given annotation
-			DenseInstance outputInstance = new DenseInstance(template);
+			DenseInstance outputInstance = new DenseInstance(dataSet.numAttributes(), template.toDoubleArray());
 			outputInstance.setDataset(dataSet);
 			
-			// This keeps track of what's not in this tweet
-			Set<Attribute> currentlyNotSet = new HashSet<Attribute>(attributeMap.values());
 			
 			for (int j = 0; j < pt.size(); j++) {
 				POSToken p = pt.get(j);
@@ -166,14 +170,6 @@ public class WordSentimentApp extends SentimentApp {
 				else {
 					outputInstance.setValue(toSet, "before");
 				}
-				
-				// Don't need to mark this as not present
-				currentlyNotSet.remove(toSet);
-			}
-			
-			for (Attribute attr : currentlyNotSet) {
-				// Everything else, better to set "notPresent" than missing
-				outputInstance.setValue(attr, "notPresent");
 			}
 			
 			// Set the class attribute
