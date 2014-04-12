@@ -34,6 +34,7 @@ public class NebraskaReaderTest {
 		//qqqqnnnn    (4-7)
 		//qqqqqqqqnqq (8)
 		
+		assertTrue(t.getAnnotation().getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(4).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(5).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(6).getKind() == AnnotationKind.Negative);
@@ -49,7 +50,7 @@ public class NebraskaReaderTest {
 		//qnqqqqnq|negative (1,6)                                                                                                                   
 		//nnqqqqnn|negative (0-1, 6-7)                                                                                                                   
 		//nnqqqqqn|negative (0-1, 7)
-		
+		assertTrue(t.getAnnotation().getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(1).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(6).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(0).getKind() == AnnotationKind.Negative);

@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
 import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
 import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.subjectivity.MultiAnnotationMap;
 
 public class NebraskaReader implements ITweetReader {
@@ -115,16 +117,52 @@ public class NebraskaReader implements ITweetReader {
 		for (Tweet t : ret) {
 			MultiAnnotationMap mam = new MultiAnnotationMap();
 			PreparedStatement fetchSubStmt = conn.prepareStatement(
-					"SELECT annotation FROM subphrases WHERE document_identifier = ?"
+					"SELECT annotation, sentiment FROM subphrases WHERE document_identifier = ?"
 				);
 			fetchSubStmt.setInt(1, t.getId2());
 			rs = fetchSubStmt.executeQuery();
+			int votes[] = new int[3];
+			for (int i = 0; i < 3; i++) votes[i] = 0;
 			while (rs.next()) {
 				List<AnnotationSpan> spans = AnnotationSpan.createSpansFromString(rs.getString(1));
 				mam.addAll(spans);
+				String sentiment = rs.getString(2);
+				if (sentiment.equals("neutral")) {
+					votes[0]++;
+				}
+				if (sentiment.equals("negative")) {
+					votes[1]++;
+				}
+				if (sentiment.equals("positive")) {
+					votes[2]++;
+				}
+			}
+			// Decide maximum annotation
+			int maxAnnotation = -1;
+			int maxVal = 0;
+			for (int i = 0; i < 3; i++) {
+				if (votes[i] > maxVal) {
+					maxVal = votes[i];
+					maxAnnotation = i;
+				}
+			}
+			switch(maxAnnotation) {
+			case 0:
+				t.setAnnotation(new AnnotationType(AnnotationKind.Neutral));
+				break;
+			case 1:
+				t.setAnnotation(new AnnotationType(AnnotationKind.Negative));
+				break;
+			case 2:
+				t.setAnnotation(new AnnotationType(AnnotationKind.Positive));
+				break;
+			default:
+				throw new Exception("What am I doing here?");
 			}
 			t.setAnnotations(mam);
 		}
+		
+		// Phase 3
 		
 		return ret;
 	}
