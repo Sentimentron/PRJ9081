@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.warwick.dcs.SemEval.io.NebraskaReader;
+import uk.ac.warwick.dcs.SemEval.io.NebraskaReader.NebraskaDomain;
 import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
 import uk.ac.warwick.dcs.SemEval.models.Tweet;
 import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
@@ -15,13 +16,12 @@ import uk.ac.warwick.dcs.SemEval.subjectivity.MultiAnnotationMap;
 
 public class NebraskaReaderTest {
 
+	
 	@Before
 	public void setUp() throws Exception {
 	}
 	
-	@Test 
-	public void testNebraskaReader() throws Exception {
-		NebraskaReader nr = new NebraskaReader("amt.sqlite.sample");
+	private void nebraskaTestTech(NebraskaReader nr) throws Exception {
 		List<Tweet> tweets = nr.readTweets();
 		assertTrue(tweets.size() == 2);
 		
@@ -55,7 +55,18 @@ public class NebraskaReaderTest {
 		assertTrue(t.getAnnotations().get(0).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(1).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(7).getKind() == AnnotationKind.Negative);
-		
+	}
+	
+	@Test 
+	public void testNebraskaReader() throws Exception {
+		NebraskaReader nr = new NebraskaReader("amt.sqlite.sample");
+		nebraskaTestTech(nr);
+	}
+	
+	@Test
+	public void testNebraskaReaderOnTechDomain() throws Exception {
+		NebraskaReader nr = new NebraskaReader("amt.sqlite.sample", NebraskaDomain.Tech);
+		nebraskaTestTech(nr);
 	}
 
 	@Test
