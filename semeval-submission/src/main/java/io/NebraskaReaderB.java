@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.SemEval;
+package io;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,14 +9,21 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NebraskaReader implements ITweetReader {
+import uk.ac.warwick.dcs.SemEval.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.MultiAnnotationMap;
+import uk.ac.warwick.dcs.SemEval.TestingBTweet;
+import uk.ac.warwick.dcs.SemEval.Tweet;
+import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+
+public class NebraskaReaderB implements ITweetReader {
 	
-	private String path;
+	private String path; 
 	
-	public NebraskaReader (String path) {
+	public NebraskaReaderB (String path) {
 		this.path = path;
 	}
-
+	
 	private Connection createConnection() throws ClassNotFoundException, SQLException {
 		Connection ret;
 		Class.forName("org.sqlite.JDBC");
@@ -25,7 +32,6 @@ public class NebraskaReader implements ITweetReader {
 		return ret;
 	}
 	
-	@Override
 	public List<Tweet> readTweets() throws Exception {
 		Connection conn = this.createConnection();
 		Statement stmt = conn.createStatement();
@@ -33,31 +39,32 @@ public class NebraskaReader implements ITweetReader {
 		
 		List<Tweet> ret = new ArrayList<Tweet>();
 		
-		// Phase 1 is to read all the tweets from the database
 		rs = stmt.executeQuery("SELECT identifier, document FROM input");
 		while (rs.next()) {
 			int documentIdentifier = rs.getInt(1);
 			String documentString  = rs.getString(2);
-			Tweet cur = new Tweet(documentString, 0, documentIdentifier);
+			Tweet cur = new TestingBTweet(documentString, 0, documentIdentifier);
 			ret.add(cur);
 		}
-				
-		// Phase 2 is to synthesize consensus annotations
-		for (Tweet t : ret) {
+		
+		for (Tweet tweet : ret) {
+			TestingBTweet t = (TestingBTweet)tweet;
 			MultiAnnotationMap mam = new MultiAnnotationMap();
 			PreparedStatement fetchSubStmt = conn.prepareStatement(
-					"SELECT annotation FROM subphrases WHERE document_identifier = ?"
+					"SELECT sentiment FROM subphrases WHERE document_identifier = ?"
 				);
 			fetchSubStmt.setInt(1, t.getId2());
 			rs = fetchSubStmt.executeQuery();
 			while (rs.next()) {
-				List<AnnotationSpan> spans = AnnotationSpan.createSpansFromString(rs.getString(1));
-				mam.addAll(spans);
+				String annotationStr = rs.getString(1);
+				if (annotationStr.equals("neutral")) t.setAnnotation(new AnnotationType(AnnotationKind.Neutral));
+				else if (annotationStr.equals("negative")) t.setAnnotation(new AnnotationType(AnnotationKind.Neutral));
+				else if (annotationStr.equals("positive")) t.setAnnotation(new AnnotationType(AnnotationKind.Positive));
 			}
-			t.annotations = mam;
+			t.setAnnotations(mam);
 		}
 		
 		return ret;
+		
 	}
-
 }

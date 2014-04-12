@@ -1,5 +1,9 @@
 package uk.ac.warwick.dcs.SemEval;
 
+import io.SemEvalTaskAReader;
+import io.SemEvalTaskATestReader;
+import io.SemEvalTaskAWriter;
+
 import java.io.IOException;
 
 import edu.stanford.nlp.util.Pair;

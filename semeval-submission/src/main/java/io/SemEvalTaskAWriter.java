@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.SemEval;
+package io;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.warwick.dcs.SemEval.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.Tweet;
 import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 
 public class SemEvalTaskAWriter {

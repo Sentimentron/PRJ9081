@@ -1,6 +1,7 @@
 package uk.ac.warwick.dcs.SemEval;
 
 import static org.junit.Assert.*;
+import io.SemEvalTaskBReader;
 
 import java.util.List;
 

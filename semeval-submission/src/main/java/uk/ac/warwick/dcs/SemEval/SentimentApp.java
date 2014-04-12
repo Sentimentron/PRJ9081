@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.SemEval;
 
+import io.SemEvalTaskAReader;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
