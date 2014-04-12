@@ -1,10 +1,11 @@
-package uk.ac.warwick.dcs.SemEval;
+package uk.ac.warwick.dcs.SemEval.models;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 
 public class AnnotationSpan extends AnnotationType {
 

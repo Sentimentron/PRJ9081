@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.SemEval;
+package uk.ac.warwick.dcs.SemEval.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,8 +9,10 @@ import java.util.Set;
 
 import edu.stanford.nlp.util.ArrayMap;
 import edu.stanford.nlp.util.Pair;
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 
 public class AnnotationMap implements Map<Integer, AnnotationType> {
 
@@ -23,13 +25,13 @@ public class AnnotationMap implements Map<Integer, AnnotationType> {
 	
 	private DuplicationStrategy duplicateStrategy; 
 	
-	AnnotationMap(DuplicationStrategy s) {
+	public AnnotationMap(DuplicationStrategy s) {
 		this.duplicateStrategy = s;
 		this.spanList = new ArrayList<AnnotationSpan>();
 		this.impl = new HashMap<Integer, AnnotationType>();
 	}
 	
-	AnnotationMap(DuplicationStrategy s, Iterable<AnnotationSpan> types) {
+	protected AnnotationMap(DuplicationStrategy s, Iterable<AnnotationSpan> types) {
 		this(s);
 		for (AnnotationSpan p : types) {
 			this.spanList.add(p);

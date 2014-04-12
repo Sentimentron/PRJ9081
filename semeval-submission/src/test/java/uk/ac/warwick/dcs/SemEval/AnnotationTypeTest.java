@@ -2,7 +2,8 @@ package uk.ac.warwick.dcs.SemEval;
 
 import org.junit.Test;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 import junit.framework.TestCase;
 
 public class AnnotationTypeTest extends TestCase {

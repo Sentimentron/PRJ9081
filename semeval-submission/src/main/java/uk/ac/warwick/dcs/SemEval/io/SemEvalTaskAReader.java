@@ -1,4 +1,4 @@
-package io;
+package uk.ac.warwick.dcs.SemEval.io;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationSpan;
-import uk.ac.warwick.dcs.SemEval.AnnotationType;
-import uk.ac.warwick.dcs.SemEval.ITweetReader;
-import uk.ac.warwick.dcs.SemEval.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
 import edu.stanford.nlp.util.Pair;
 
 public class SemEvalTaskAReader implements ITweetReader {

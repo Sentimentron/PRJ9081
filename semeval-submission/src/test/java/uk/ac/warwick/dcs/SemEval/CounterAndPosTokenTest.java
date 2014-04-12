@@ -4,7 +4,11 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.POSToken;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.subjectivity.SubjectivityMap;
+import uk.ac.warwick.dcs.SemEval.utils.Counter;
 
 public class CounterAndPosTokenTest {
 

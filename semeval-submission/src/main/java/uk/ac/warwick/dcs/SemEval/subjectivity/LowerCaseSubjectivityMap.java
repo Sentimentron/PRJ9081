@@ -1,4 +1,6 @@
-package uk.ac.warwick.dcs.SemEval;
+package uk.ac.warwick.dcs.SemEval.subjectivity;
+
+import uk.ac.warwick.dcs.SemEval.models.POSToken;
 
 public class LowerCaseSubjectivityMap extends SubjectivityMap {
 

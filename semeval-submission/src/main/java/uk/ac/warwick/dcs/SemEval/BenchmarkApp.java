@@ -1,12 +1,13 @@
 package uk.ac.warwick.dcs.SemEval;
 
-import io.SemEvalTaskAReader;
-import io.SemEvalTaskATestReader;
-import io.SemEvalTaskAWriter;
-
 import java.io.IOException;
 
 import edu.stanford.nlp.util.Pair;
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskAReader;
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskATestReader;
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskAWriter;
+import uk.ac.warwick.dcs.SemEval.models.TestingATweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
 import weka.classifiers.AbstractClassifier;
 
 public class BenchmarkApp {

@@ -1,11 +1,5 @@
 package uk.ac.warwick.dcs.SemEval;
 
-import io.NebraskaReader;
-import io.NebraskaReaderB;
-import io.SemEvalTaskAReader;
-import io.SemEvalTaskBReader;
-import io.SemEvalTaskBWriter;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,6 +12,18 @@ import java.util.TreeSet;
 import java.util.Set;
 
 import edu.stanford.nlp.util.Pair;
+import uk.ac.warwick.dcs.SemEval.io.NebraskaReader;
+import uk.ac.warwick.dcs.SemEval.io.NebraskaReaderB;
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskAReader;
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskBReader;
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskBWriter;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
+import uk.ac.warwick.dcs.SemEval.models.POSToken;
+import uk.ac.warwick.dcs.SemEval.models.TestingBTweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.utils.Counter;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Attribute;

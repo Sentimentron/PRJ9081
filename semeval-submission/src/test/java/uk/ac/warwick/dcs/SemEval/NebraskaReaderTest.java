@@ -1,14 +1,17 @@
 package uk.ac.warwick.dcs.SemEval;
 
 import static org.junit.Assert.*;
-import io.NebraskaReader;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.io.NebraskaReader;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.subjectivity.MultiAnnotationMap;
 
 public class NebraskaReaderTest {
 

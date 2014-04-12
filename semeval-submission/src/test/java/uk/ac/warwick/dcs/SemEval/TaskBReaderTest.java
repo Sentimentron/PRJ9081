@@ -1,13 +1,16 @@
 package uk.ac.warwick.dcs.SemEval;
 
 import static org.junit.Assert.*;
-import io.SemEvalTaskBReader;
 
 import java.util.List;
 
 import org.junit.Test;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskBReader;
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.models.TestingBTweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 
 public class TaskBReaderTest {
 

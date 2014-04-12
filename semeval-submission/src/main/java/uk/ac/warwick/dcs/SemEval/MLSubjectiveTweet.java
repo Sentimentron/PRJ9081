@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
+import uk.ac.warwick.dcs.SemEval.models.POSToken;
+import uk.ac.warwick.dcs.SemEval.subjectivity.SubjectivityMap;
 import edu.stanford.nlp.util.Pair;
 import weka.core.Attribute;
 import weka.core.DenseInstance;

@@ -9,8 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cmu.arktweetnlp.RawTagger;
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
+import uk.ac.warwick.dcs.SemEval.models.POSToken;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.utils.AnnotationMap;
 
 public class POSTaggedTweetTest {
 	

@@ -3,6 +3,9 @@ package uk.ac.warwick.dcs.SemEval;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+
 public class MultiTweetReader implements ITweetReader {
 
 	private List<ITweetReader> readers;

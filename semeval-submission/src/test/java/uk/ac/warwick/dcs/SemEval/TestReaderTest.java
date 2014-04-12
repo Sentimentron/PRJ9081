@@ -1,12 +1,14 @@
 package uk.ac.warwick.dcs.SemEval;
 
 import static org.junit.Assert.*;
-import io.SemEvalTaskATestReader;
 
 import java.util.List;
 
 import org.junit.Test;
 
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskATestReader;
+import uk.ac.warwick.dcs.SemEval.models.TestingATweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
 import edu.stanford.nlp.util.Pair;
 
 public class TestReaderTest {

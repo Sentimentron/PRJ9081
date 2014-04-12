@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.SemEval;
+package uk.ac.warwick.dcs.SemEval.models;
 
 import java.util.List;
 

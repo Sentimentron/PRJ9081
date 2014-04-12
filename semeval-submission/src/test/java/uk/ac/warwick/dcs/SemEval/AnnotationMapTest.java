@@ -10,8 +10,11 @@ import java.util.Map.Entry;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationMap.DuplicationStrategy;
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.utils.AnnotationMap;
+import uk.ac.warwick.dcs.SemEval.utils.AnnotationMap.DuplicationStrategy;
 
 /**
  * @author cs407
@@ -30,7 +33,7 @@ public class AnnotationMapTest {
 	}
 
 	/**
-	 * Test method for {@link uk.ac.warwick.dcs.SemEval.AnnotationMap#removeSliceShiftRightToLeft()}.
+	 * Test method for {@link uk.ac.warwick.dcs.SemEval.utils.AnnotationMap#removeSliceShiftRightToLeft()}.
 	 */
 	@Test
 	public void testSliceRemove() {
@@ -58,7 +61,7 @@ public class AnnotationMapTest {
 	}
 	
 	/**
-	 * Test method for {@link uk.ac.warwick.dcs.SemEval.AnnotationMap#insertSlice()}.
+	 * Test method for {@link uk.ac.warwick.dcs.SemEval.utils.AnnotationMap#insertSlice()}.
 	 */
 	@Test
 	public void testInsertSlice() {
@@ -99,7 +102,7 @@ public class AnnotationMapTest {
 	}
 	
 	/**
-	 * Test method for {@link uk.ac.warwick.dcs.SemEval.AnnotationMap#regenerate()}.
+	 * Test method for {@link uk.ac.warwick.dcs.SemEval.utils.AnnotationMap#regenerate()}.
 	 */
 	@Test
 	public void testRegenerate() {
@@ -138,7 +141,7 @@ public class AnnotationMapTest {
 	}
 
 	/**
-	 * Test method for {@link uk.ac.warwick.dcs.SemEval.AnnotationMap#remove(uk.ac.warwick.dcs.SemEval.AnnotationSpan)}.
+	 * Test method for {@link uk.ac.warwick.dcs.SemEval.utils.AnnotationMap#remove(uk.ac.warwick.dcs.SemEval.models.AnnotationSpan)}.
 	 */
 	@Test
 	public void testRemoveAnnotationSpan() {

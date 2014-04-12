@@ -14,8 +14,15 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import edu.stanford.nlp.util.Pair;
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
+import uk.ac.warwick.dcs.SemEval.models.POSToken;
+import uk.ac.warwick.dcs.SemEval.models.TestingATweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.utils.PorterStemmer;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.misc.InputMappedClassifier;
@@ -134,7 +141,7 @@ public class WordSentimentApp extends SentimentApp {
 			}
 			else {
 				// Don't bother exporting objective stuff
-				a = t.annotations.get(i);
+				a = t.getAnnotations().get(i);
 				if (a == null) continue;
 				if (!a.isSubjective()) continue;
 			}

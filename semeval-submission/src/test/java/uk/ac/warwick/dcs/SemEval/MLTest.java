@@ -10,8 +10,13 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.subjectivity.SubjectivityMap;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.SimpleLogistic;

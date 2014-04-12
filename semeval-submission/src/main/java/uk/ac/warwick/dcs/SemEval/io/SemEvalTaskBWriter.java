@@ -1,12 +1,12 @@
-package io;
+package uk.ac.warwick.dcs.SemEval.io;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType;
-import uk.ac.warwick.dcs.SemEval.TestingBTweet;
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.TestingBTweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 
 public class SemEvalTaskBWriter {
 	private BufferedWriter bw;

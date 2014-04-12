@@ -1,7 +1,8 @@
-package uk.ac.warwick.dcs.SemEval;
+package uk.ac.warwick.dcs.SemEval.models;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.utils.WordRangeMap;
 import cmu.arktweetnlp.RawTagger;
 
 public class POSToken implements Comparable<POSToken> {

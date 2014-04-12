@@ -1,11 +1,11 @@
 package uk.ac.warwick.dcs.SemEval;
 
-import io.SemEvalTaskAReader;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskAReader;
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
 import weka.core.Instances;
 
 public class SubjectivityInvestigationApp {

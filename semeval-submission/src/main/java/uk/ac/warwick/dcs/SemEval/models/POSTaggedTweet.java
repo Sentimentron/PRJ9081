@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.SemEval;
+package uk.ac.warwick.dcs.SemEval.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
+import uk.ac.warwick.dcs.SemEval.utils.WordRangeMap;
 import cmu.arktweetnlp.RawTagger;
 import cmu.arktweetnlp.RawTwokenize;
 

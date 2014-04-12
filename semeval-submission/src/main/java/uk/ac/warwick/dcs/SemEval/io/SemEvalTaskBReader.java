@@ -1,4 +1,4 @@
-package io;
+package uk.ac.warwick.dcs.SemEval.io;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType;
-import uk.ac.warwick.dcs.SemEval.ITweetReader;
-import uk.ac.warwick.dcs.SemEval.TestingBTweet;
-import uk.ac.warwick.dcs.SemEval.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.models.TestingBTweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
 
 public class SemEvalTaskBReader implements ITweetReader {
 

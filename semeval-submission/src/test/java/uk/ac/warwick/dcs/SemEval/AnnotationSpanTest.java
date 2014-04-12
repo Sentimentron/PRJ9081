@@ -6,8 +6,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 
 public class AnnotationSpanTest {
 

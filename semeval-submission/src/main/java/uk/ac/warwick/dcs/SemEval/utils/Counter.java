@@ -1,5 +1,5 @@
 
-package uk.ac.warwick.dcs.SemEval;
+package uk.ac.warwick.dcs.SemEval.utils;
 
 import java.util.Collection;
 import java.util.Map;

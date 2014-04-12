@@ -1,7 +1,6 @@
 package uk.ac.warwick.dcs.SemEval;
 
 import static org.junit.Assert.*;
-import io.SemEvalTaskAWriter;
 
 import java.io.IOException;
 import java.io.File;
@@ -12,7 +11,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskAWriter;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 
 public class WriterTest {
 

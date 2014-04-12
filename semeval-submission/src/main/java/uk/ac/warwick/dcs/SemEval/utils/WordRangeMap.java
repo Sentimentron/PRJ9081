@@ -1,4 +1,4 @@
-package uk.ac.warwick.dcs.SemEval;
+package uk.ac.warwick.dcs.SemEval.utils;
 
 import java.util.TreeMap;
 import java.util.Map;

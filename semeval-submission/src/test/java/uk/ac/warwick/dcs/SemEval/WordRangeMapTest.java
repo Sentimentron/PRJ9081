@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
+import uk.ac.warwick.dcs.SemEval.utils.WordRangeMap;
 
 /**
  * @author cs407
@@ -16,7 +17,7 @@ import uk.ac.warwick.dcs.SemEval.exceptions.WordRangeMapException;
 public class WordRangeMapTest {
 
 	/**
-	 * Test method for {@link uk.ac.warwick.dcs.SemEval.WordRangeMap#addWord(java.lang.String)}.
+	 * Test method for {@link uk.ac.warwick.dcs.SemEval.utils.WordRangeMap#addWord(java.lang.String)}.
 	 * @throws WordRangeMapException 
 	 */
 	@Test

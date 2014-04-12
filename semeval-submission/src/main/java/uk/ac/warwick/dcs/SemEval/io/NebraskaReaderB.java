@@ -1,4 +1,4 @@
-package io;
+package uk.ac.warwick.dcs.SemEval.io;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,12 +9,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.warwick.dcs.SemEval.AnnotationType;
-import uk.ac.warwick.dcs.SemEval.ITweetReader;
-import uk.ac.warwick.dcs.SemEval.MultiAnnotationMap;
-import uk.ac.warwick.dcs.SemEval.TestingBTweet;
-import uk.ac.warwick.dcs.SemEval.Tweet;
-import uk.ac.warwick.dcs.SemEval.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.models.TestingBTweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.subjectivity.MultiAnnotationMap;
 
 public class NebraskaReaderB implements ITweetReader {
 	

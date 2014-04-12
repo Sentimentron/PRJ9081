@@ -1,7 +1,5 @@
 package uk.ac.warwick.dcs.SemEval;
 
-import io.SemEvalTaskAReader;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +7,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskAReader;
+import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
+import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
+import uk.ac.warwick.dcs.SemEval.subjectivity.SubjectivityMap;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
