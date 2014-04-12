@@ -82,4 +82,12 @@ public class Tweet {
 	public void setAnnotations(MultiAnnotationMap mam) {
 		this.annotations = mam;
 	}
+
+	public AnnotationType getAnnotation() {
+		return annotation;
+	}
+
+	public void setAnnotation(AnnotationType annotation) {
+		this.annotation = annotation;
+	}
 }
