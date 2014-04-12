@@ -54,20 +54,14 @@ public class POSTaggedTweet extends Tweet {
 	}
 	
 	public POSTaggedTweet(Tweet t, RawTagger tagger) throws Exception {
-		super(t.getText(), t.getAnnotations(), t.getId1(), t.getId2());
+		super(t.getText(), t.getAnnotation(), t.getAnnotations(), t.getId1(), t.getId2());
 		
 		if (t instanceof TestingATweet) {
 			TestingATweet tw = (TestingATweet) t;
 			this.parent = new TestingATweet(t.getText(), t.getId1(), t.getId2(), tw.getInterestingSections()); 
 		}
-		else if (t instanceof TestingBTweet) {
-			TestingBTweet tw = (TestingBTweet) t;
-			this.parent = new TestingBTweet(t.getText(),
-					t.getId1(), t.getId2(), tw.getAnnotation()
-				);
-		}
 		else {
-			this.parent = new Tweet(t.getText(), t.getAnnotations(), t.getId1(), t.getId2());
+			this.parent = new Tweet(t.getText(), t.getAnnotation(), t.getAnnotations(), t.getId1(), t.getId2());
 		}
 		
 		String rawText = t.getText();

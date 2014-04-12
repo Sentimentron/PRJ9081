@@ -42,6 +42,18 @@ public class Tweet {
 		this.annotations = m;
 	}
 	
+	public Tweet(String text, AnnotationType ta,
+			AnnotationMap m, long id1, int id2) {
+		this(text, m, id1, id2);
+		this.setAnnotation(ta);
+	}
+
+	public Tweet(String text, long identifier1, int identifier2,
+			AnnotationType at) {
+		this(text, identifier1, identifier2);
+		this.setAnnotation(at);
+	}
+
 	public void addAnnotation(AnnotationSpan s) throws InvalidAnnotationSpanException {
 		if (s.getEnd() > this.maxLength) {
 			throw new InvalidAnnotationSpanException("Longer than the tweet", this.maxLength, s.getEnd());

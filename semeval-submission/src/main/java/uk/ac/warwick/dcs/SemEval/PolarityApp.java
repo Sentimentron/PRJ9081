@@ -13,7 +13,6 @@ import java.util.Set;
 
 import edu.stanford.nlp.util.Pair;
 import uk.ac.warwick.dcs.SemEval.io.NebraskaReader;
-import uk.ac.warwick.dcs.SemEval.io.NebraskaReaderB;
 import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskAReader;
 import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskBReader;
 import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskBWriter;
@@ -21,7 +20,7 @@ import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
 import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
 import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
 import uk.ac.warwick.dcs.SemEval.models.POSToken;
-import uk.ac.warwick.dcs.SemEval.models.TestingBTweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
 import uk.ac.warwick.dcs.SemEval.models.Tweet;
 import uk.ac.warwick.dcs.SemEval.utils.Counter;
 import weka.classifiers.AbstractClassifier;
@@ -89,7 +88,7 @@ public class PolarityApp extends SentimentApp {
 		return this.createInstances(thresholdedBigrams, attributeMap);
 	}
 	
-	protected Map<TestingBTweet, Instance> createInstancesForTweets(
+	protected Map<Tweet, Instance> createInstancesForTweets(
 			Set<Pair<String, String>> thresholdedBigrams,
 			Map<Pair<String, String>, Attribute> attributeMap, 
 			Instance templateInstance, Instances dataSet,
@@ -100,9 +99,9 @@ public class PolarityApp extends SentimentApp {
 			) throws Exception {
 		
 		int progressCounter = 0;
-		Map<TestingBTweet, Instance> ret = new TreeMap<TestingBTweet, Instance>();
+		Map<Tweet, Instance> ret = new TreeMap<Tweet, Instance>();
 		for (POSTaggedTweet pt: this.taggedTweets) {
-			TestingBTweet parent = (TestingBTweet)pt.getParent();
+			Tweet parent = (Tweet)pt.getParent();
 			progressCounter++;
 			if (progressCounter % 100 == 1 || progressCounter == taggedTweets.size()) {
 				System.err.printf("Creating instances (%d attribute(s), %d/%d complete, %.4f)\r", 
@@ -254,7 +253,7 @@ public class PolarityApp extends SentimentApp {
 		ret.setClass(sentimentClassAttr);
 		Instance templateInstance = new DenseInstance(attributes.size());
 		
-		for (Entry<TestingBTweet, Instance> e : this.createInstancesForTweets(thresholdedBigrams, 
+		for (Entry<Tweet, Instance> e : this.createInstancesForTweets(thresholdedBigrams, 
 				attributeMap, templateInstance, 
 				ret, pnePercentPAttr, 
 				pnePercentNAttr, pnePercentEAttr, sentimentClassAttr).entrySet()) {
@@ -288,7 +287,7 @@ public class PolarityApp extends SentimentApp {
 		trainSrc.addReader(new NebraskaReader("amt.sqlite"));
 		bTrainSrc.addReader(new SemEvalTaskBReader("tweeter-dev-full-B.tsv"));
 		bTrainSrc.addReader(new SemEvalTaskBReader("twitter-train-full-B.tsv"));
-		bTrainSrc.addReader(new NebraskaReaderB("amt.sqlite"));
+		bTrainSrc.addReader(new NebraskaReader("amt.sqlite"));
 		
 		SubjectivityApp subjectivitySrc = new SubjectivityApp(trainSrc);
 		subjectivitySrc.readTweets();
@@ -322,7 +321,7 @@ public class PolarityApp extends SentimentApp {
 		polarityTarget.posTagTweets();
 		polarityTarget.applyPredictions(clfPolarity, polarityAttrMap, thresholdedBigrams);
 		for (Tweet p : polarityTarget.getTweets()) {
-			testWriter.writeTweet((TestingBTweet)p);
+			testWriter.writeTweet((Tweet)p);
 		}
 		
 		testWriter.finish();

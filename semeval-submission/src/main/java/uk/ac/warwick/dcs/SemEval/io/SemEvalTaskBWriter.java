@@ -5,8 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
-import uk.ac.warwick.dcs.SemEval.models.TestingBTweet;
 import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
 
 public class SemEvalTaskBWriter {
 	private BufferedWriter bw;
@@ -31,7 +31,7 @@ public class SemEvalTaskBWriter {
 		}
 	}
 	
-	public void writeTweet(TestingBTweet t) throws IOException {
+	public void writeTweet(Tweet t) throws IOException {
 		if (t.getId1() == 0) {
 			this.bw.write("NA");
 		}

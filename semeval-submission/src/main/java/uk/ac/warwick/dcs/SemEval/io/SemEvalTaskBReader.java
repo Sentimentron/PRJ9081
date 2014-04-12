@@ -9,7 +9,6 @@ import java.util.List;
 
 import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
 import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
-import uk.ac.warwick.dcs.SemEval.models.TestingBTweet;
 import uk.ac.warwick.dcs.SemEval.models.Tweet;
 
 public class SemEvalTaskBReader implements ITweetReader {
@@ -39,13 +38,13 @@ public class SemEvalTaskBReader implements ITweetReader {
 		   
 		   if (tweet.equals("Not Available")) continue;
 		   
-		   Tweet out = new TestingBTweet(tweet, 
+		   Tweet out = new Tweet(tweet, 
 				   identifier1, identifier2, 
 				   AnnotationType.fromSemEvalString(polarity)
 				  );
 		   ret.add(out);
 		}
-		
+		br.close();
 		return ret;
 	}
 	
