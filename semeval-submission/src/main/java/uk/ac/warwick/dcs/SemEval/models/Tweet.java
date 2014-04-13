@@ -6,7 +6,7 @@ import uk.ac.warwick.dcs.SemEval.subjectivity.MultiAnnotationMap;
 import uk.ac.warwick.dcs.SemEval.utils.AnnotationMap;
 import uk.ac.warwick.dcs.SemEval.utils.AnnotationMap.DuplicationStrategy;
 
-public class Tweet {
+public class Tweet implements Comparable<Tweet> {
 
 	protected AnnotationMap annotations;
 	protected String text;
@@ -101,5 +101,24 @@ public class Tweet {
 
 	public void setAnnotation(AnnotationType annotation) {
 		this.annotation = annotation;
+	}
+	
+	@Override
+	public int compareTo(Tweet o) {
+		int ret = this.getText().compareTo(o.getText());
+		if (ret != 0) return ret; 
+		if (this.getId1() > o.getId1()) {
+			return 1;
+		}
+		else if (this.getId1() < o.getId1()) {
+			return -1;
+		}
+		else if (this.getId2() > o.getId2()) {
+			return 1;
+		}
+		else if (this.getId2() < o.getId2()) {
+			return -1;
+		}
+		return 0;
 	}
 }
