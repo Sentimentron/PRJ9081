@@ -2,6 +2,9 @@ package uk.ac.warwick.dcs.SemEval;
 
 import static org.junit.Assert.*;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.Before;
@@ -40,7 +43,12 @@ public class NebraskaReaderTest {
 		assertTrue(t.getAnnotations().get(6).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(7).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(8).getKind() == AnnotationKind.Negative);
-
+		assertTrue(t.getDate().getDate() == 29);
+		assertTrue(t.getDate().getYear() == 2014-1900);
+		assertTrue(t.getDate().getMonth() == 2);
+		assertTrue(t.getDate().getHours() == 14);
+		assertTrue(t.getDate().getMinutes() == 20);
+		assertTrue(t.getDate().getSeconds() == 33);
 		
 		t = tweets.get(1);
 		assertTrue("Accidentally deleted my Yahoo cricket app AGAIN :-S".equals(t.getText()));
@@ -56,6 +64,12 @@ public class NebraskaReaderTest {
 		assertTrue(t.getAnnotations().get(0).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(1).getKind() == AnnotationKind.Negative);
 		assertTrue(t.getAnnotations().get(7).getKind() == AnnotationKind.Negative);
+		assertTrue(t.getDate().getDate() == 29);
+		assertTrue(t.getDate().getYear() == 2014-1900);
+		assertTrue(t.getDate().getMonth() == 2);
+		assertTrue(t.getDate().getHours() == 14);
+		assertTrue(t.getDate().getMinutes() == 20);
+		assertTrue(t.getDate().getSeconds() == 33);
 	}
 	
 	@Test 

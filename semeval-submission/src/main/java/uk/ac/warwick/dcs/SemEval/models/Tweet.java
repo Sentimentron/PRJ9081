@@ -1,5 +1,7 @@
 package uk.ac.warwick.dcs.SemEval.models;
 
+import java.util.Date;
+
 import uk.ac.warwick.dcs.SemEval.exceptions.InvalidAnnotationSpanException;
 import uk.ac.warwick.dcs.SemEval.models.AnnotationType.AnnotationKind;
 import uk.ac.warwick.dcs.SemEval.subjectivity.MultiAnnotationMap;
@@ -16,6 +18,8 @@ public class Tweet implements Comparable<Tweet> {
 	
 	private long id1;
 	private int id2;
+	
+	private Date date;
 	
 	public long getId1() {
 		return this.id1;
@@ -120,5 +124,13 @@ public class Tweet implements Comparable<Tweet> {
 			return -1;
 		}
 		return 0;
+	}
+
+	public void setDate(Date dt) {
+		this.date = dt;
+	}
+	
+	public Date getDate() {
+		return this.date;
 	}
 }

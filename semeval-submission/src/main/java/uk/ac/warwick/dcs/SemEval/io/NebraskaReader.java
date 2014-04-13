@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import uk.ac.warwick.dcs.SemEval.models.AnnotationSpan;
@@ -84,6 +86,8 @@ public class NebraskaReader implements ITweetReader {
 		PreparedStatement stmt;
 		ResultSet rs;
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
 		List<Tweet> ret = new ArrayList<Tweet>();
 		List<Integer> domainLabels = this.getDomainList();
 		StringBuilder inBuilder = new StringBuilder();
@@ -94,7 +98,7 @@ public class NebraskaReader implements ITweetReader {
 			inBuilder.append('?');
 		}
 		
-		stmt = conn.prepareStatement("SELECT DISTINCT identifier, document FROM input "
+		stmt = conn.prepareStatement("SELECT DISTINCT identifier, document, date FROM input "
 				+ "WHERE identifier IN ("
 				+ "SELECT DISTINCT document_identifier FROM label_amt "
 				+ "WHERE label IN ("+inBuilder.toString()+"))");
@@ -109,7 +113,10 @@ public class NebraskaReader implements ITweetReader {
 		while (rs.next()) {
 			int documentIdentifier = rs.getInt(1);
 			String documentString  = rs.getString(2);
+			String documentDate    = rs.getString(3);
+			Date dt = sdf.parse(documentDate);
 			Tweet cur = new Tweet(documentString, 0, documentIdentifier);
+			cur.setDate(dt);
 			ret.add(cur);
 		}
 				
