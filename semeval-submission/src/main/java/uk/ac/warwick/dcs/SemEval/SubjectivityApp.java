@@ -14,6 +14,7 @@ import uk.ac.warwick.dcs.SemEval.io.SemEvalTaskAReader;
 import uk.ac.warwick.dcs.SemEval.models.AnnotationType;
 import uk.ac.warwick.dcs.SemEval.models.ITweetReader;
 import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
+import uk.ac.warwick.dcs.SemEval.models.Tweet;
 import uk.ac.warwick.dcs.SemEval.subjectivity.SubjectivityMap;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
@@ -43,7 +44,11 @@ public class SubjectivityApp extends SentimentApp {
     	super(r);
     }
 
-    protected ArrayList<Attribute> getAttributes() {
+    public SubjectivityApp(List<Tweet> input) throws IOException {
+		super(input);
+	}
+
+	protected ArrayList<Attribute> getAttributes() {
 		ArrayList<Attribute> attrs = new ArrayList<Attribute>();
 		attrs.add(new Attribute("conf1"));
 		attrs.add(new Attribute("conf2"));

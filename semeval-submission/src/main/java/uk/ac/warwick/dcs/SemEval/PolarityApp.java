@@ -133,10 +133,8 @@ public class PolarityApp extends SentimentApp {
 				case Positive:
 					totalPositive++;
 					break;
-				case Objective:
-					break;
 				default:
-					throw new Exception("Why am I here?");
+					break;
 				}
 			}
 			
@@ -154,7 +152,12 @@ public class PolarityApp extends SentimentApp {
 			thisInstance.setValue(pnePercentEAttr, 1.0 * totalNeutral / tList.size());
 			thisInstance.setValue(pnePercentNAttr, 1.0 * totalNegative / tList.size());
 			thisInstance.setValue(pnePercentPAttr, 1.0 * totalPositive / tList.size());
-			thisInstance.setValue(sentimentClassAttr, parent.getAnnotation().toNominalSentiment());
+			if (parent.getAnnotation() != null) {
+				thisInstance.setValue(sentimentClassAttr, parent.getAnnotation().toNominalSentiment());
+			}
+			else {
+				thisInstance.setClassMissing();
+			}
 			ret.put(parent, thisInstance);
 		}
 		return ret;

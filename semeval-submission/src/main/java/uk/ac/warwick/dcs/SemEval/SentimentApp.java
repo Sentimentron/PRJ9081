@@ -107,7 +107,14 @@ public abstract class SentimentApp {
 		int counter = 0;
 		int total   = this.tweets.size();
 		for (Tweet t : tweets) {
-			POSTaggedTweet p = new POSTaggedTweet(t, posTagger);
+			POSTaggedTweet p;
+			try {
+				p = new POSTaggedTweet(t, posTagger);
+			}
+			catch(Exception ex) {
+				System.err.printf("Cannot POS tag: %s (exception: %s)\n", t.getText(), ex.toString());
+				continue;
+			}
 			taggedTweets.add(p);
 			counter++;
 

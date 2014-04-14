@@ -1,13 +1,15 @@
 
 package uk.ac.warwick.dcs.SemEval.utils;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class Counter<K> implements Map<K, Integer> {
+public class Counter<K> implements Map<K, Integer>, Serializable {
 	
+	private static final long serialVersionUID = -2373847681165492532L;
 	Map<K, Integer> map = new TreeMap<K, Integer>();
 
 	@Override

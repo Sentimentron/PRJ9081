@@ -1,13 +1,16 @@
 package uk.ac.warwick.dcs.SemEval.subjectivity;
 
+import java.io.Serializable;
+
 import uk.ac.warwick.dcs.SemEval.models.POSTaggedTweet;
 import uk.ac.warwick.dcs.SemEval.models.POSToken;
 import uk.ac.warwick.dcs.SemEval.utils.Counter;
 
-public class SubjectivityMap {
+public class SubjectivityMap implements Serializable {
 
-	Counter<String> subj_map = new Counter<String>();
-	Counter<String> freq_map = new Counter<String>();
+	private static final long serialVersionUID = 7996978875904940291L;
+	private Counter<String> subj_map = new Counter<String>();
+	private Counter<String> freq_map = new Counter<String>();
 	
 	public String getMapRepresentation(POSToken p) {
 		return String.format("%s", p.token);

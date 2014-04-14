@@ -51,6 +51,12 @@ public class Tweet implements Comparable<Tweet> {
 		this(text, m, id1, id2);
 		this.setAnnotation(ta);
 	}
+	
+	public Tweet(String text, AnnotationType ta,
+			AnnotationMap m, long id1, int id2, Date date) {
+		this(text, ta, m, id1, id2);
+		this.setDate(date);
+	}
 
 	public Tweet(String text, long identifier1, int identifier2,
 			AnnotationType at) {

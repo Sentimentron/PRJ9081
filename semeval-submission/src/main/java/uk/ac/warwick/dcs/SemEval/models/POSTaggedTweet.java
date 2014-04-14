@@ -61,7 +61,7 @@ public class POSTaggedTweet extends Tweet {
 			this.parent = new TestingATweet(t.getText(), t.getId1(), t.getId2(), tw.getInterestingSections()); 
 		}
 		else {
-			this.parent = new Tweet(t.getText(), t.getAnnotation(), t.getAnnotations(), t.getId1(), t.getId2());
+			this.parent = new Tweet(t.getText(), t.getAnnotation(), t.getAnnotations(), t.getId1(), t.getId2(), t.getDate());
 		}
 		
 		String rawText = t.getText();

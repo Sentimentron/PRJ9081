@@ -26,14 +26,20 @@ public class NebraskaReader implements ITweetReader {
 	
 	private String path;
 	private NebraskaDomain domain;
+	private boolean skipReadingAnnotations;
 	
-	public NebraskaReader (String path, NebraskaDomain domain) {
+	public NebraskaReader (String path, NebraskaDomain domain, boolean skip) {
 		this.path = path;
 		this.domain = domain;
+		this.skipReadingAnnotations = skip;
+	}
+	
+	public NebraskaReader (String path, NebraskaDomain domain) {
+		this(path, domain, false);
 	}
 	
 	public NebraskaReader (String path) {
-		this(path, NebraskaDomain.All);
+		this(path, NebraskaDomain.All, true);
 	}
 
 	private Connection createConnection() throws ClassNotFoundException, SQLException {
@@ -89,23 +95,27 @@ public class NebraskaReader implements ITweetReader {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		List<Tweet> ret = new ArrayList<Tweet>();
-		List<Integer> domainLabels = this.getDomainList();
 		StringBuilder inBuilder = new StringBuilder();
 		boolean first = true;
-		for (@SuppressWarnings("unused") int label : domainLabels) {
-			if (first) first = false;
-			else inBuilder.append(',');
-			inBuilder.append('?');
+		if (this.domain == NebraskaDomain.All) {
+			stmt = conn.prepareStatement("SELECT identifier, document, date FROM input WHERE date IS NOT NULL");
 		}
-		
-		stmt = conn.prepareStatement("SELECT DISTINCT identifier, document, date FROM input "
-				+ "WHERE identifier IN ("
-				+ "SELECT DISTINCT document_identifier FROM label_amt "
-				+ "WHERE label IN ("+inBuilder.toString()+"))");
-		
-		for (int i = 0; i < domainLabels.size(); i++) {
-			int label = domainLabels.get(i);
-			stmt.setInt(i+1, label);
+		else {
+			List<Integer> domainLabels = this.getDomainList();
+			for (@SuppressWarnings("unused") int label : domainLabels) {
+				if (first) first = false;
+				else inBuilder.append(',');
+				inBuilder.append('?');
+			}
+			stmt = conn.prepareStatement("SELECT DISTINCT identifier, document, date FROM input "
+					+ "WHERE identifier IN ("
+					+ "SELECT DISTINCT document_identifier FROM label_amt "
+					+ "WHERE label IN ("+inBuilder.toString()+")) AND date IS NOT NULL");
+			
+			for (int i = 0; i < domainLabels.size(); i++) {
+				int label = domainLabels.get(i);
+				stmt.setInt(i+1, label);
+			}
 		}
 		
 		// Phase 1 is to read all the tweets from the database
@@ -119,7 +129,10 @@ public class NebraskaReader implements ITweetReader {
 			cur.setDate(dt);
 			ret.add(cur);
 		}
-				
+		
+		// If we don't have these tables...
+		if (this.skipReadingAnnotations) return ret;
+		
 		// Phase 2 is to synthesize consensus annotations
 		for (Tweet t : ret) {
 			MultiAnnotationMap mam = new MultiAnnotationMap();
@@ -168,8 +181,6 @@ public class NebraskaReader implements ITweetReader {
 			}
 			t.setAnnotations(mam);
 		}
-		
-		// Phase 3
 		
 		return ret;
 	}
