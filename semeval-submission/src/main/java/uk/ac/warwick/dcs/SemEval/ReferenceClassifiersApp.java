@@ -55,6 +55,7 @@ public class ReferenceClassifiersApp {
 		Evaluation e = new Evaluation(i);
 		e.crossValidateModel(cls, i, 4, new Random());
 		System.out.println(e.toSummaryString());
+		System.out.println(e.toClassDetailsString());
 	}
 	
 	private static AbstractClassifier createAndSaveSubjectivityClassifier(NebraskaDomain d) throws Exception {
