@@ -27,15 +27,15 @@ import weka.core.Attribute;
 
 public class BatchAnnotateApp {
 
-	private NebraskaDomain domain;
-	private NebraskaReader reader;
-	private AbstractClassifier clfWord;
-	private AbstractClassifier clfSubjective;
-	private AbstractClassifier clfPolarity;
-	private SubjectivityMap subjectivityMap;
-	private Set<String> modifierWords;
-	private Set<Pair<String, String>> thresholdedBigrams;
-	private Map<Pair<String, String>, Attribute> attributeMap;
+	protected NebraskaDomain domain;
+	protected NebraskaReader reader;
+	protected AbstractClassifier clfWord;
+	protected AbstractClassifier clfSubjective;
+	protected AbstractClassifier clfPolarity;
+	protected SubjectivityMap subjectivityMap;
+	protected Set<String> modifierWords;
+	protected Set<Pair<String, String>> thresholdedBigrams;
+	protected Map<Pair<String, String>, Attribute> attributeMap;
 	
 	public BatchAnnotateApp(String srcDatabase, NebraskaDomain d) {
 		this.reader = new NebraskaReader(srcDatabase);
@@ -152,7 +152,7 @@ public class BatchAnnotateApp {
 		return ret;
 	}
 	
-	private void loadData() throws Exception {
+	protected void loadData() throws Exception {
 		System.err.println("Loading classifiers and data...");
 		this.clfPolarity = this.getTweetClassifier();
 		this.clfSubjective = this.getSubjectiveClassifier();
@@ -191,10 +191,10 @@ public class BatchAnnotateApp {
 	
 	public static void main(String[] args) throws Exception {
 
-		String srcDatabase = "apple_filtered.sqlite";
-		BatchAnnotateApp ba = new BatchAnnotateApp(srcDatabase, NebraskaDomain.Tech);
+		String srcDatabase = "finance.sqlite";
+		BatchAnnotateApp ba = new BatchAnnotateApp(srcDatabase, NebraskaDomain.Finance);
 		ba.loadData();
-		ba.annotate("DT4270.csv");
+		ba.annotate("DT4283.csv");
 	}
 
 }

@@ -80,7 +80,7 @@ public class NebraskaReaderTest {
 	
 	@Test
 	public void testNebraskaReaderOnTechDomain() throws Exception {
-		NebraskaReader nr = new NebraskaReader("amt.sqlite.sample", NebraskaDomain.Tech);
+		NebraskaReader nr = new NebraskaReader("amt.sqlite.sample", NebraskaDomain.Tech, false);
 		nebraskaTestTech(nr);
 	}
 

@@ -156,7 +156,7 @@ public class PolarityApp extends SentimentApp {
 				thisInstance.setValue(sentimentClassAttr, parent.getAnnotation().toNominalSentiment());
 			}
 			else {
-				thisInstance.setClassMissing();
+				System.err.printf("%d: no annotation?\n",parent.getId2());
 			}
 			ret.put(parent, thisInstance);
 		}
